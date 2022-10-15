@@ -1,0 +1,33 @@
+#====================================================================================================
+#
+#
+#               MK-JoinMessage     Configuration
+#                                     插件设置
+#                                               Author: Mu_Cloud
+#                                                 作者
+#
+#====================================================================================================
+
+#   插件设置文件版本，非必要不可更改
+Version: 1.2
+
+#
+#   注意事项: 本插件全局可用 PlaceholderAPI
+#           这意味着你可以在 JoinMessage ExitMessage 中使用变量
+#
+
+JoinMessage: "&7[&a+&7] %player_name%"
+ExitMessage: "&7[&4-&7] %player_name%"
+
+#
+#   权限进入提示:
+#       当玩家拥有以下列出的权限时，进入服务器时即显示对应拥有权限的进入提示
+#
+#   注意事项: Priority 为优先级选项
+#           当某一玩家拥有PermissionMessages下定义的多个权限时，将根据符合项的优先级选定对应权限项的文本
+#
+PermissionMessages:
+#  "mkjmp.admin":
+#    Priority: 1
+#    JoinMessage: 'Welcome %player_name%'
+#    ExitMessage: 'Byebye %player_name%'

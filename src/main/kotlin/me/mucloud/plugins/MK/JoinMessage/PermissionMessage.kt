@@ -6,21 +6,34 @@ class PermissionMessage constructor(
 
     permission: String,
     priority: Int,
-    joinMessage: String,
-    exitMessage: String
+    joinMessage: String?,
+    exitMessage: String?
 
 ){
 
-    var Permission: String = permission
-    var Priority: Int = priority
+    private var Permission: String = permission
+    private var Priority: Int = priority
+    private var JoinMessage: String? = joinMessage
+    private var ExitMessage: String? = exitMessage
 
-    var JoinMessage: String = joinMessage
-        get() = changeMessage(field)
-    var ExitMessage: String = exitMessage
-        get() = changeMessage(field)
+    fun getPermission(): String{
+        return Permission
+    }
 
-    private fun changeMessage(message: String): String{
-        return ChatColor.translateAlternateColorCodes('&',message)
+    fun getPriority(): Int{
+        return Priority
+    }
+
+    fun getJoinMessage(): String{
+        return changeMessage(JoinMessage)
+    }
+
+    fun getExitMessage(): String{
+        return changeMessage(ExitMessage)
+    }
+
+    private fun changeMessage(message: String?): String{
+        return ChatColor.translateAlternateColorCodes('&', message.toString())
     }
 
 }

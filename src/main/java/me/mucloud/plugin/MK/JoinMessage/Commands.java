@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
-public class Commands implements CommandExecutor {
+public class Commands implements CommandExecutor{
 
     private final Main main;
 

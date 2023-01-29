@@ -15,7 +15,7 @@ public class Configuration implements IConfiguration{
     private final Main main;
     private final File ConfigFolder;
     private final File ConfigFile;
-    private Double ConfigVersion = null;
+    private Integer ConfigVersion = null;
     private String Version = null;
 
     Configuration(Main plugin){
@@ -58,7 +58,7 @@ public class Configuration implements IConfiguration{
             HashMap<?,?> Pmap = y.loadAs(main.getResource("plugin.yml"),HashMap.class);
             HashMap<?,?> Cmap = y.loadAs(main.getResource("config.yml"),HashMap.class);
             Version = Pmap.get("version").toString();
-            ConfigVersion = (Double) Cmap.get("Version");
+            ConfigVersion = (Integer) Cmap.get("Version");
 
             fc.load(ConfigFile);
 
@@ -66,6 +66,8 @@ public class Configuration implements IConfiguration{
                 ConfigFile.delete();
                 main.saveDefaultConfig();
             }
+
+
 
             JoinMessage = messageChange(fc.get("JoinMessage") == null ? "§7[§a+§7] " + "%player_name%" : fc.getString("JoinMessage"));
             ExitMessage = messageChange(fc.get("ExitMessage") == null ? "§7[§4-§7] " + "%player_name%" : fc.getString("ExitMessage"));
@@ -122,6 +124,10 @@ public class Configuration implements IConfiguration{
         } catch (IOException | InvalidConfigurationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void mergeConfigFile(int oldVersion){
+        //TODO
     }
 
 

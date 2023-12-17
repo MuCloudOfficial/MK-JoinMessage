@@ -1,4 +1,4 @@
-# MK-JoinMessage~Kotlin~ ~Edition~
+# MK-JoinMessage KotlinEdition  
 一个简单的进入服务器提示插件.
 
 作者: Mu_Cloud

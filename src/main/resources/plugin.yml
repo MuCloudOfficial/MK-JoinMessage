@@ -1,16 +1,29 @@
-#==================================================
+#====================================================
 name: MK-JoinMessage
-main: me.mucloud.plugin.MK.JoinMessage.Main
-version: 1.1.2
+main: me.mucloud.mcplugin.MK.JoinMessage.Main
+version: SakuraOcean
+versionCN: "樱·海"
+verType: DEV
+internalVersion: 1
 author: Mu_Cloud
-#==================================================
+#====================================================
+versionCNV: "§d§l樱§7§l·§3§l海"
+versionV: "§d§lSakura§3§lOcean"
+#====================================================
+libraries:
+  - "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
+  - "org.jetbrains.kotlin:kotlin-stdlib-common:1.9.21"
+  - "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.21"
+  - "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.21"
+#====================================================
+api-version: 1.13
 depend: [ PlaceholderAPI ]
 
 commands:
   mkjm:
     aliases: [ mkjoinmessage ]
-    usage: /mkjs info
+    usage: /mkjm info
 
 permissions:
-  mkjs.admin:
+  mkjm.admin:
     default: op

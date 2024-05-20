@@ -8,6 +8,12 @@
     <img src="https://img.shields.io/badge/DEV-1-gray?style=flat&labelColor=red" alt=""/>
 </div>
 
+---
+
+<p align="center">MADE IN SAKURA OCEAN | “纵使深情，难换樱花。”</p>
+
+<p align="center">Designed by Mu_Cloud</p>
+
 ___
 ### 功能 & 特性
 - 自定义玩家进入服务器时的提示语

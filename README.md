@@ -10,9 +10,9 @@
 
 ---
 
-<p align="center">MADE IN SAKURA OCEAN | “纵使深情，难换樱花。”</p>
+<p align="center" style="font-weight: bold">MADE IN SAKURA OCEAN | “纵使深情，难换樱花。”</p>
 
-<p align="center">Designed by Mu_Cloud</p>
+<p align="center" style="font-weight: bold">Designed by Mu_Cloud</p>
 
 ___
 ### 功能 & 特性

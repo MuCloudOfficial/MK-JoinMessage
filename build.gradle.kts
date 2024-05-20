@@ -1,15 +1,13 @@
 plugins {
-    kotlin("jvm") version "1.9.21"
+    kotlin("jvm") version "1.9.23"
 }
 
 group = "me.mucloud"
-version = "SakuraOcean"
+version = "SakuraOcean V1"
+val dev = 1
 
 repositories {
-    maven("https://oss.sonatype.org/content/repositories/snapshots")
-    maven("https://oss.sonatype.org/content/repositories/central")
-
-    mavenCentral()
+    maven("https://maven.aliyun.com/repository/public")
 
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
@@ -19,7 +17,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     testImplementation("junit:junit:4.13.1")
 
-    compileOnly("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.2")
 }
 
@@ -39,7 +37,7 @@ tasks{
     }
 
     jar{
-
+        archiveFileName.set("MK-JoinMessage-KotlinEdition_${project.version}.jar")
     }
 
 }

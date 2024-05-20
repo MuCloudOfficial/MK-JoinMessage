@@ -1,51 +1,55 @@
 package me.mucloud.mcplugin.MK.JoinMessage
 
-import me.clip.placeholderapi.PlaceholderAPI
 import org.bukkit.ChatColor
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 
-val converters: List<(String, Player) -> String> = listOf(
-    fun(s: String, c: Player): String{
-        return s.replace("{player}", c.name)
+class MessageSender(main: Main) {
+
+    init{
+        INSTANCE = main.server.consoleSender
     }
-)
 
-fun convertMessage(msg: String): String{
-    return ChatColor.translateAlternateColorCodes('&', msg)
-}
+    companion object{
 
-fun convertMessage(msg: String, caller: Player): String{
-    return if(PlaceholderAPIHooker.isHook()){
-        PlaceholderAPI.setPlaceholders(caller, convertMessage(msg))
-    }else{
-        var s: String = msg
-        converters.forEach { i ->
-            s = i(msg, caller)
+        private lateinit var INSTANCE: ConsoleCommandSender
+
+        fun sendMessageToConsole(lvl: MessageLevel, msg: String){
+            INSTANCE.sendMessage("${Main.getPrefix(true)}$lvl$msg")
         }
 
-        s
+        fun sendMessage(lvl: MessageLevel, target: Player, msg: String){
+            target.sendMessage("${Main.getPrefix(false)}$lvl$msg")
+        }
+
+        fun sendBossBarMessage(lvl: MessageLevel, target: Player, msg: String){
+
+        }
+
+        fun sendBossBarMessage(lvl: MessageLevel, msg: String){
+
+        }
+
+        fun sendActionBarMessage(lvl: MessageLevel, target: Player, msg: String){
+
+        }
+
+        fun sendActionBarMessage(lvl: MessageLevel, msg: String){
+
+        }
+
     }
+
 }
 
-object ConsoleSender{
+enum class MessageLevel(private val color: ChatColor){
 
-    private lateinit var main: ConsoleCommandSender
+    INFO(ChatColor.WHITE),
+    FINISH(ChatColor.GREEN),
+    WARN(ChatColor.GOLD),
+    ERR(ChatColor.RED);
 
-    fun init(main: ConsoleCommandSender){
-        this.main = main
-    }
+    override fun toString(): String = color.toString()
 
-    fun info(msg: String){
-        main.sendMessage("${PREFIX} §7§l| $msg")
-    }
-
-    fun warn(msg: String){
-        main.sendMessage("${PREFIX} §6§l| $msg")
-    }
-
-    fun err(msg: String){
-        main.sendMessage("${PREFIX} §4§l| $msg")
-    }
 
 }

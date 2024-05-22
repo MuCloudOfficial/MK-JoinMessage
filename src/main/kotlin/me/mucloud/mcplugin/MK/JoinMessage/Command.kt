@@ -15,11 +15,23 @@ object CommandManager: CommandExecutor{
 
 }
 
+/**
+ * ### /mkjm info
+ *
+ * | 显示插件版本和指令信息
+ *
+ */
 fun CMD_INFO(sender: CommandSender){
 
 }
 
-fun CMD_GET_GROUPS(sender: CommandSender){
+/**
+ * ### /mkjm list
+ *
+ * | 列出当前所有组
+ *
+ */
+fun CMD_LIST(sender: CommandSender){
 
 }
 
@@ -31,18 +43,39 @@ fun CMD_DEL_GROUP(sender: CommandSender, args: Array<String>){
 
 }
 
-fun CMD_MODIFY_JM_GROUP(sender: CommandSender, args: Array<String>){
+fun CMD_VANISH(sender: CommandSender, args: Array<String>){
 
 }
 
-fun CMD_MODIFY_EM_GROUP(sender: CommandSender, args: Array<String>) {
+fun CMD_ADD(sender: CommandSender, args: Array<String>){
 
 }
 
-fun CMD_MODIFY_PRIORITY_GROUP(sender: CommandSender, args: Array<String>) {
+fun CMD_DEL(sender: CommandSender, args: Array<String>){
 
 }
 
-fun CMD_MODIFY_PERM_GROUP(sender: CommandSender, args: Array<String>) {
+fun CMD_SET(sender: CommandSender, args: Array<String>){
 
 }
+
+fun CMD_SETJM(sender: CommandSender, args: Array<String>){
+
+}
+
+fun CMD_SETQM(sender: CommandSender, args: Array<String>){
+
+}
+
+fun CMD_SETMODE(sender: CommandSender, args: Array<String>){
+
+}
+
+fun CMD_FIND(sender: CommandSender, args: Array<String>){
+
+}
+
+fun CMD_INFGROUP(sender: CommandSender, args: Array<String>){
+
+}
+

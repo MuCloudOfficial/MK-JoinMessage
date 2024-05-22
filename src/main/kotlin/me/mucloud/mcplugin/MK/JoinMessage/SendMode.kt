@@ -1,8 +1,8 @@
 package me.mucloud.mcplugin.MK.JoinMessage
 
-@Deprecated("暂缓 | 当前不可用")
 enum class SendMode{
 
+    NULL,
     CHAT,
     ACTIONBAR,
     BOSSBAR;
@@ -10,6 +10,7 @@ enum class SendMode{
     companion object{
         fun match(id: String): SendMode{
             when(id.uppercase()){
+                "NULL" -> NULL
                 "CHAT" -> CHAT
                 "ACTIONBAR" -> ACTIONBAR
                 "BOSSBAR" -> BOSSBAR

@@ -1,31 +1,25 @@
 package me.mucloud.mcplugin.MK.JoinMessage
 
 import org.bukkit.configuration.file.YamlConfiguration
-import java.io.File
-import java.nio.charset.StandardCharsets
+import java.io.InputStreamReader
+import java.util.*
 
 object Configuration {
 
-    private lateinit var ConfigFolder: File
-    private val ConfigFile: File = File(ConfigFolder, "config.yml")
+    private lateinit var Version: String
+    private lateinit var VersionCN: String
+    private lateinit var VersionView: String
+    private lateinit var VersionCNView: String
 
-    private lateinit var PluginDFReader: YamlConfiguration
-    private lateinit var ConfigReader: YamlConfiguration
+    private lateinit var VersionType: String
 
-    private lateinit var ConfigVersion: String
-    private lateinit var SendMode: SendMode
-
-    private lateinit var PluginVersion: String
-
-    fun init(main: Main){
-        ConfigFolder = main.dataFolder
-
-        PluginDFReader = YamlConfiguration.loadConfiguration(main.getResource("plugin.yml")!!.reader(StandardCharsets.UTF_8))
-        ConfigReader = YamlConfiguration.loadConfiguration(ConfigFile)
-    }
-
-    fun readConfig(){
-        ConfigReader.getConfigurationSection("Groups")?.getValues(true)
+    private fun getVersion() = YamlConfiguration().also{
+        it.load(InputStreamReader(Main.Companion::class.java.getResourceAsStream("plugin.yml")!!, "utf-8"))
+        Version = it.getString("version")!!
+        VersionCN = it.getString("versionCN")!!
+        VersionView = it.getString("versionV")!!
+        VersionCNView = it.getString("versionCNV")!!
+        VersionType = it.getString("verType")!!
     }
 
 

@@ -1,13 +1,13 @@
 #====================================================
 name: MK-JoinMessage
 main: me.mucloud.mcplugin.MK.JoinMessage.Main
-version: SakuraOcean
-versionCN: "樱·海"
+version: SakuraOcean V1
+versionCN: "樱花の海"
 verType: DEV
 internalVersion: 1
 author: Mu_Cloud
 #====================================================
-versionCNV: "§d§l樱§7§l·§3§l海"
+versionCNV: "§d§l樱花§7§lの§3§l海"
 versionV: "§d§lSakura§3§lOcean"
 #====================================================
 libraries:
@@ -16,7 +16,6 @@ libraries:
   - "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.21"
   - "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.21"
 #====================================================
-api-version: 1.12
 softdepend: [ PlaceholderAPI ]
 
 commands:

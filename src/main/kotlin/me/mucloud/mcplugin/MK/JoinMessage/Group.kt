@@ -17,6 +17,9 @@ object GroupManager{
         "",""
     )
 
+    fun DEFAULT_GROUP(): Group = DEFAULT_GROUP
+    fun SPY_GROUP(): Group = SPY_GROUP
+
     fun init(){
 
     }
@@ -50,13 +53,13 @@ object GroupManager{
         return null
     }
 
-    fun getGroup(player: OfflinePlayer): Group?{
+    fun getGroup(player: OfflinePlayer): Group{
         POOL.forEach{ g ->
             if(g.contains(player)){
                 return g
             }
         }
-        return null
+        return DEFAULT_GROUP
     }
 
 }

@@ -1,5 +1,5 @@
 <h2 align="center"> 系列 I · 第三弹 | 暮空系列 </h2>
-<h3 align="center"> MK-JoinMessage | MC 服务器进服消息自定义插件 </h3>
+<h3 align="center">(WIP) MK-JoinMessage | MC 服务器进服消息自定义插件</h3>
 
 <div align="center">
     <img src="https://img.shields.io/badge/Kotlin-1.9.23-gray?style=flat&labelColor=purple" alt=""/>

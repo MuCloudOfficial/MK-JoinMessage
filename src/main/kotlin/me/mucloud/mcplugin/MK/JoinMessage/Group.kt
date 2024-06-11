@@ -1,27 +1,26 @@
 package me.mucloud.mcplugin.MK.JoinMessage
 
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 
 object GroupManager{
 
     private val POOL: MutableList<Group> = emptyList<Group>().toMutableList()
 
-    private val DEFAULT_GROUP: Group = Group(
+    internal val DEFAULT_GROUP = Group(
         "default", SendMode.CHAT,
-        "§7[§a+§7]§f {player}",
-        "§7[§4-§7]§f {player}"
+        "§7[§a+§7]{player}",
+        "§7[§4-§7]{player}"
     )
 
-    private val SPY_GROUP: Group = Group(
-        "spy", SendMode.NULL,
-        "",""
-    )
+    internal val SPY_USERS = emptyList<Player>().toMutableList()
 
-    fun DEFAULT_GROUP(): Group = DEFAULT_GROUP
-    fun SPY_GROUP(): Group = SPY_GROUP
+    internal var USER_SIZE = 0;
 
     fun init(){
-
+        SQLITEConnector.getGroups()
+        SQLITEConnector.getUsers()
+        SQLITEConnector.getSpy()
     }
 
     // 0 = Success | 1 = Already Exist
@@ -53,13 +52,21 @@ object GroupManager{
         return null
     }
 
-    fun getGroup(player: OfflinePlayer): Group{
+    fun getGroup(player: OfflinePlayer): Group?{
         POOL.forEach{ g ->
             if(g.contains(player)){
                 return g
             }
         }
-        return DEFAULT_GROUP
+        return null
+    }
+
+    fun size(): Int = POOL.size
+
+    fun userSize(): Int = USER_SIZE
+
+    fun save(){
+        SQLITEConnector.flush()
     }
 
 }
@@ -90,7 +97,10 @@ class Group(
     }
 
     fun info(): String = """
-        
+        | 组名: $Name
+        | 进服消息: $JoinMessage
+        | 退服消息: $ExitMessage
+        | 该组当前成员(${Member.size}): ${Member.toString().substring(1).dropLast(1)}
     """.trimIndent()
 
     fun equalsName(name: String): Boolean{

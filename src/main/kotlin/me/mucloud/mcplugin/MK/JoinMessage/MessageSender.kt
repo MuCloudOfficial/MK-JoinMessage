@@ -3,6 +3,8 @@ package me.mucloud.mcplugin.MK.JoinMessage
 import org.bukkit.ChatColor
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class MessageSender(main: Main) {
 
@@ -13,6 +15,7 @@ class MessageSender(main: Main) {
     companion object{
 
         private lateinit var INSTANCE: ConsoleCommandSender
+        private val LOGGER: Logger = LoggerFactory.getLogger(Main.getPrefix2Logger())
 
         fun sendMessageToConsole(lvl: MessageLevel, msg: String){
             INSTANCE.sendMessage("${Main.getPrefix(true)}$lvl$msg")
@@ -37,6 +40,12 @@ class MessageSender(main: Main) {
         fun sendActionBarMessage(lvl: MessageLevel, msg: String){
 
         }
+
+        fun logInfo(msg: String) = LOGGER.info(msg)
+
+        fun logWarn(msg: String, warn: Throwable) = LOGGER.warn(msg, warn)
+
+        fun logErr(msg: String, err: Throwable) = LOGGER.error(msg, err)
 
     }
 

@@ -1,10 +1,40 @@
+import java.io.FileReader
+
 plugins {
     kotlin("jvm") version "1.9.23"
 }
 
+val ymlreader = FileReader(File(projectDir, "src/main/resources/plugin.yml")).readLines()
+
 group = "me.mucloud"
-version = "SakuraOcean V1"
-val dev = 1
+private lateinit var versionCN: String
+private var DEV: Int = 0
+private lateinit var authors: List<String>
+private lateinit var versionCNV: String
+private lateinit var versionV: String
+
+ymlreader.forEach { s ->
+    val ss = s.split(": ")
+    when(ss[0]){
+        "version" -> version = ss[1]
+        "versionCN" -> versionCN = ss[1]
+        "internalVersion" -> DEV = ss[1].toInt()
+        "authors" -> authors = ss[1].substring(1).dropLast(1).trim().split(",")
+        "versionCNV" -> versionCNV = ss[1]
+        "versionV" -> versionV = ss[1]
+    }
+}
+
+println("""
+==================================
+= MK-JoinMessage     Build Info  =
+==================================
+| VERSION >>> $versionCN($version) DEV.$DEV
+| AUTHORS >>> ${authors.toString().substring(1).dropLast(1)}
+==================================
+=      MADE IN SAKURA OCEAN      =
+==================================
+""".trimIndent())
 
 repositories {
     maven("https://maven.aliyun.com/repository/public")
@@ -44,4 +74,3 @@ tasks{
     }
 
 }
-

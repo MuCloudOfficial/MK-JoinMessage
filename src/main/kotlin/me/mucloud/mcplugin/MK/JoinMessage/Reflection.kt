@@ -17,6 +17,9 @@ class NMS_HOOKER{
     private val SERVER_PREFIX: String
     private val SERVER_VER: String
 
+    private val VERSION_INDEX: Int
+    private val LEGACY_NMS: Boolean
+
     init{
         supportedVersions["v1_9_R2"] = 1
         supportedVersions["v1_10_R1"] = 2
@@ -43,6 +46,13 @@ class NMS_HOOKER{
                 return@let raw
             }
         }
+
+        VERSION_INDEX = supportedVersions.getOrElse(NMS_VER){
+            supportedVersions.values.maxOrNull() ?: -1
+        }
+        LEGACY_NMS = supportedVersions[NMS_VER]!! < 10
     }
+
+
 
 }

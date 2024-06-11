@@ -1,11 +1,11 @@
 #====================================================
 name: MK-JoinMessage
 main: me.mucloud.mcplugin.MK.JoinMessage.Main
-version: SakuraOcean V1
-versionCN: "樱花の海"
+version: SakuraOcean V2
+versionCN: 樱花の海
 verType: DEV
 internalVersion: 1
-author: Mu_Cloud
+authors: [ Mu_Cloud, Adv.Tech of Twilight Cloud Pavilion ]
 #====================================================
 versionCNV: "§d§l樱花§7§lの§3§l海"
 versionV: "§d§lSakura§3§lOcean"

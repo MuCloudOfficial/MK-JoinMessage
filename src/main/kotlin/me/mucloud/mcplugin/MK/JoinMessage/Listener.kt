@@ -1,5 +1,6 @@
 package me.mucloud.mcplugin.MK.JoinMessage
 
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -8,20 +9,28 @@ import org.bukkit.event.player.PlayerQuitEvent
 object Listener: Listener{
 
     @EventHandler fun onJoinServerListener(e: PlayerJoinEvent){
-        val target = GroupManager.getGroup(e.player)
-        if(target == GroupManager.SPY_GROUP()){
+        val targetP = e.player
+        val targetG = GroupManager.getGroup(targetP) ?: GroupManager.DEFAULT_GROUP()
+        if(GroupManager.isSpyPlayer(targetP)){
             e.joinMessage = null
         }else{
-            e.joinMessage = target.getJoinMessage()
+            e.joinMessage = targetG.getJoinMessage()
+            Bukkit.getOnlinePlayers().forEach{
+                it.playSound(it, targetG.getSound(), 1.0F, 1.0F)
+            }
         }
     }
 
     @EventHandler fun onExitServerListener(e: PlayerQuitEvent){
-        val target = GroupManager.getGroup(e.player)
-        if(target == GroupManager.SPY_GROUP()){
+        val targetP = e.player
+        val targetG = GroupManager.getGroup(targetP) ?: GroupManager.DEFAULT_GROUP()
+        if(GroupManager.isSpyPlayer(targetP)){
             e.quitMessage = null
         }else{
-            e.quitMessage = target.getExitMessage()
+            e.quitMessage = targetG.getExitMessage()
+            Bukkit.getOnlinePlayers().forEach{
+                it.playSound(it, targetG.getSound(), 1.0F, 0F)
+            }
         }
     }
 

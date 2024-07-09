@@ -1,37 +1,40 @@
 package me.mucloud.mcplugin.MK.JoinMessage
 
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
 class Main: JavaPlugin() {
 
-    override fun onEnable(){
-        MessageSender(this)
-        SQLITEConnector.init(this)
-        Configuration.
-        GroupManager.init()
+    private var PAPI_HOOK = false
 
+    override fun onEnable(){
+        MessageSender.init(this)
+        Configuration.preInit(this)
+        SQLITEConnector.init(this)
+        Configuration.init()
+        GroupManager.init()
+        regCommand()
     }
 
     override fun onDisable(){
-        
+        SQLITEConnector.flushAll()
     }
 
     private fun regCommand() = getCommand("mkjm")?.setExecutor(CommandManager)
-    
+
+    private fun checkPapiHook(){
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
+            PAPI_HOOK = true
+        }
+    }
+
     companion object{
-        
-        private const val PREFIX: String = "§e§lMK§7§l-§b§lJoinMessage"
-
-        
-        fun getPrefix(useToLog: Boolean): String =
-            if(useToLog){
-                "§7§l[$PREFIX§7§l]§f "
+        internal fun Prefix(useLog: Boolean): String =
+            if(useLog){
+                "MK-JoinMessage"
             }else{
-                "$PREFIX §b§l>>>§f "
+                "§bMK§7-§6JoinMessage§f"
             }
-
-        fun getPrefix2Logger(): String = PREFIX
-        
     }
 
 }

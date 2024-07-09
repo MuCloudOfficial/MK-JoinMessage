@@ -5,7 +5,7 @@ version: SakuraOcean V2
 versionCN: 樱花の海
 verType: DEV
 internalVersion: 1
-authors: [ Mu_Cloud, Adv.Tech of Twilight Cloud Pavilion ]
+authors: [ Mu_Cloud ]
 #====================================================
 versionCNV: "§d§l樱花§7§lの§3§l海"
 versionV: "§d§lSakura§3§lOcean"
@@ -17,12 +17,13 @@ libraries:
   - "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.21"
 #====================================================
 softdepend: [ PlaceholderAPI ]
-
+#====================================================
 commands:
   mkjm:
     aliases: [ mkjoinmessage ]
     usage: /mkjm info
-
+#====================================================
 permissions:
   mkjm.admin:
     default: op
+#====================================================

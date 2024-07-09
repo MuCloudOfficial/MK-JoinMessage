@@ -3,14 +3,20 @@ package me.mucloud.mcplugin.MK.JoinMessage
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
+import org.bukkit.Sound
+import org.bukkit.entity.Player
 import java.io.File
+import java.io.ObjectInputFilter.Config
 import java.sql.Connection
+import java.sql.PreparedStatement
 import java.sql.Statement
 import java.util.*
 
 internal object SQLITEConnector{
 
     private lateinit var CONN: Connection
+    private lateinit var PS: PreparedStatement
     private lateinit var STAT: Statement
 
     fun init(main: Main){
@@ -23,131 +29,178 @@ internal object SQLITEConnector{
             it.maxLifetime = 2000
         }).connection
 
-        STAT = CONN.createStatement()
-
         initStructure()
     }
 
+    private const val SQL_CONF_STRUCT =
+        "CREATE TABLE CONF(" +
+        "ID INT PRIMARY KEY AUTOINCREMENT," +
+        "KEY TEXT NOT NULL," +
+        "VAL BLOB NOT NULL)"
+
+    private const val SQL_GROUP_STRUCT =
+        "CREATE TABLE MKG(" +
+        "ID INT PRIMARY KEY AUTOINCREMENT," +
+        "NAME TEXT NOT NULL," +
+        "MODE TEXT NOT NULL," +
+        "SOUND TEXT NOT NULL," +
+        "JOINMESSAGE TEXT NOT NULL," +
+        "EXITMESSAGE TEXT NOT NULL)"
+
+    private const val SQL_USER_STRUCT =
+        "CREATE TABLE USER(" +
+        "ID INT PRIMARY KEY AUTOINCREMENT," +
+        "NAME TEXT NOT NULL," +
+        "UUID TEXT NOT NULL," +
+        "GID TEXT NOT NULL)"
+
+    private const val SQL_SPY_STRUCT =
+        "CREATE TABLE SPY(" +
+        "ID INT PRIMARY KEY AUTOINCREMENT," +
+        "NAME TEXT NOT NULL," +
+        "UUID TEXT NOT NULL)"
+
     fun checkIntegrity_conf(): Boolean =
-        STAT.executeQuery("SELECT sql FROM sqlite_master WHERE type = 'table' AND tbl_name = 'CONF'").next()
+        STAT.executeQuery("SELECT * FROM sqlite_master WHERE type = 'table' AND tbl_name = 'CONF' AND sql = '$SQL_CONF_STRUCT'").next()
 
     fun checkIntegrity_user(): Boolean =
-        STAT.executeQuery("SELECT sql FROM sqlite_master WHERE type = 'table' AND tbl_name = 'USER'").next()
+        STAT.executeQuery("SELECT * FROM sqlite_master WHERE type = 'table' AND tbl_name = 'USER' AND sql = '$SQL_USER_STRUCT'").next()
 
     fun checkIntegrity_group(): Boolean =
-        STAT.executeQuery("SELECT sql FROM sqlite_master WHERE type = 'table' AND tbl_name = 'GROUP'").next()
+        STAT.executeQuery("SELECT * FROM sqlite_master WHERE type = 'table' AND tbl_name = 'MKG' AND sql = '$SQL_GROUP_STRUCT'").next()
 
     fun checkIntegrity_spy(): Boolean =
-        STAT.executeQuery("SELECT sql FROM sqlite_master WHERE type = 'table' AND tbl_name = 'SPY'").next()
+        STAT.executeQuery("SELECT * FROM sqlite_master WHERE type = 'table' AND tbl_name = 'SPY' AND sql = '$SQL_SPY_STRUCT'").next()
 
-    fun initStructure(){
+    private fun initStructure(){
+        DB_initConf()
+        DB_initGroup()
+        DB_initUser()
+        DB_initSpy()
+    }
+
+    private fun DB_initConf(){
         if(!checkIntegrity_conf()){
-            STAT.executeUpdate("CREATE TABLE CONF(" +
-                    "ID INT PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    "KEY TEXT NOT NULL," +
-                    "VAL BLOB NOT NULL)")
+            STAT.executeUpdate(SQL_CONF_STRUCT)
         }
+    }
+
+    private fun DB_initGroup(){
         if(!checkIntegrity_group()){
-            STAT.executeUpdate("CREATE TABLE \"GROUP\"(" +
-                    "ID INT PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    "NAME TEXT NOT NULL UNIQUE," +
-                    "MODE TEXT NOT NULL," +
-                    "JOINMESSAGE TEXT NOT NULL," +
-                    "EXITMESSAGE TEXT NOT NULL)")
+            STAT.executeUpdate(SQL_GROUP_STRUCT)
         }
+    }
+
+    private fun DB_initUser(){
         if(!checkIntegrity_user()){
-            STAT.executeUpdate("CREATE TABLE USER(" +
-                    "ID INT PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    "NAME TEXT NOT NULL UNIQUE," +
-                    "UUID TEXT NOT NULL UNIQUE," +
-                    "GNAME TEXT NOT NULL)")
+            STAT.executeUpdate(SQL_USER_STRUCT)
         }
+    }
+
+    private fun DB_initSpy(){
         if(!checkIntegrity_spy()){
-            STAT.executeUpdate("CREATE TABLE SPY(" +
-                    "ID INT PRIMARY KEY NOT NULL," +
-                    "NAME TEXT NOT NULL UNIQUE," +
-                    "UUID TEXT NOT NULL UNIQUE)")
+            STAT.executeUpdate(SQL_SPY_STRUCT)
         }
     }
 
-    fun getConf(): Map<String, String>{
+    internal fun readConf(): Map<String, String>{
         val map = mutableMapOf<String, String>()
-        if(checkIntegrity_conf()){
-            if(checkIntegrity_conf()){
-                STAT.executeQuery("SELECT * FROM CONF").also {
-                    while (it.next()){
-                        map[it.getString("KEY")] = it.getString("VAL")
-                    }
+        if(!checkIntegrity_conf()){
+            return map
+        }
+        STAT.executeQuery("select * from CONF").also {
+            while(it.next()){
+                map[it.getString("KEY")] = it.getString("VAL")
+            }
+        }
+        return map
+    }
+
+    internal fun readGroup(): List<Group>{
+        val list = mutableListOf<Group>()
+        if(!checkIntegrity_group()){
+            return list
+        }
+        STAT.executeQuery("select * from MKG").also {
+            while(it.next()){
+                val g = Group(
+                    it.getString("NAME"),
+                    SendMode.match(it.getString("MODE")),
+                    Sound.valueOf(it.getString("SOUND")),
+                    it.getString("JOINMESSAGE"),
+                    it.getString("EXITMESSAGE"))
+                list.add(g)
+            }
+        }
+        return list
+    }
+
+    internal fun readUser(){
+        if(!checkIntegrity_user()){
+            return
+        }
+        STAT.executeQuery("select USER.NAME, USER.UUID, MKG.NAME from USER, MKG where USER.GID == MKG.ID").also {
+            while (it.next()){
+                val g = GroupManager.getGroup(it.getString("MKG.NAME")) ?: GroupManager.DEFAULT_GROUP()
+                val uid = UUID.fromString(it.getString("UUID"))
+                var player = Bukkit.getPlayer(uid)
+                if(player == null){
+                    player = Bukkit.getOfflinePlayer(uid) as Player
                 }
+                g.addMember(player)
             }
         }
     }
 
-    fun getGroups(){
-        if(checkIntegrity_group()){
-            STAT.executeQuery("SELECT * FROM \"GROUP\"").also {
-                if(it.next()){
-                    GroupManager.addGroup(
-                        Group(
-                            it.getString("NAME"),
-                            SendMode.match(it.getString("MODE")),
-                            it.getString("JOINMESSAGE"),
-                            it.getString("EXITMESSAGE")
-                        )
-                    )
+    internal fun readSpy(){
+        if(!checkIntegrity_spy()){
+            return
+        }
+        STAT.executeQuery("select * from SPY").also {
+            while(it.next()){
+                val uid = UUID.fromString(it.getString("UUID"))
+                var player = Bukkit.getPlayer(uid)
+                if(player == null){
+                    player = Bukkit.getOfflinePlayer(uid) as Player
                 }
+                GroupManager.addSpyPlayer(player)
             }
-            MessageSender.sendMessageToConsole(MessageLevel.FINISH, "加载了 ${GroupManager.}")
         }
     }
 
-    fun getUsers(){
-        if(checkIntegrity_user()){
-            var time = 0
-            STAT.executeQuery("SELECT * FROM USER").also{
-                while(it.next()){
-                    val target = Bukkit.getPlayer(UUID.fromString(it.getString("UUID")))
-                    if(target == null){
-                        MessageSender.sendMessageToConsole(MessageLevel.WARN, "存储中给定的用户 ${it.getString("NAME")} 可能不存在")
-                        continue
-                    }
-                    time++
-                    GroupManager.getGroup(it.getString("GNAME")).also { g ->
-                        if(g == null){
-                            MessageSender.sendMessageToConsole(MessageLevel.WARN, "${target.name} 指定的组名不在组池内，已移至默认组")
-                            GroupManager.DEFAULT_GROUP.addMember(target)
-                        }else{
-                            g.addMember(target)
-                        }
-                    }
-                }
-            }
-            MessageSender.sendMessageToConsole(MessageLevel.FINISH, "加载了 ${time.also { GroupManager.USER_SIZE = it }} 个用户")
+    fun flushAll(){
+        flushConf()
+        flushGroupManager()
+    }
+
+    fun flushConf(){
+        DB_initConf()
+        val ptr = "insert into CONF(KEY, VAL) VALUES(?,?)"
+        Configuration.getConfiguration().forEach{
+            PS = CONN.prepareStatement(ptr)
+            PS.setString(1, it.key)
+            PS.setString(2, it.value)
+            PS.executeUpdate()
         }
     }
 
-    fun getSpy(){
-        if(checkIntegrity_spy()){
-            STAT.executeQuery("SELECT * FROM SPY").also {
-                while (it.next()){
-                    val target = Bukkit.getPlayer(UUID.fromString(it.getString("UUID")))
-                    if(target == null){
-                        MessageSender.sendMessageToConsole(MessageLevel.WARN, "存储中给定的用户 ${it.getString("NAME")} 可能不存在")
-                        continue
-                    }
-                    GroupManager.SPY_USERS.add(target)
-                }
-            }
-            MessageSender.sendMessageToConsole(MessageLevel.FINISH, "加载了 ${GroupManager.SPY_USERS.size} 个隐藏组成员")
+    fun flushGroupManager(){
+        DB_initGroup()
+        DB_initUser()
+        DB_initSpy()
+        val ptrGroup = "insert into MKG(NAME, MODE, SOUND, JOINMESSAGE, EXITMESSAGE) VALUES(?,?,?,?,?)"
+        GroupManager.POOL().forEach {
+            PS = CONN.prepareStatement(ptrGroup)
+            PS.setString(1, it.getName())
+            PS.setString(2, it.getMode().name)
+            PS.setString(3, it.getSound().name)
+            PS.setString(4, it.getJoinMessage())
+            PS.setString(5, it.getExitMessage())
         }
-    }
-
-    fun flush(){
-
     }
 
     fun close(){
-        STAT.close()
+        PS.close()
         CONN.close()
     }
 

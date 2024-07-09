@@ -1,7 +1,10 @@
 import java.io.FileReader
 
 plugins {
-    kotlin("jvm") version "1.9.23"
+    java
+    idea
+    kotlin("jvm") version "1.9.24"
+    id("com.github.johnrengelman.shadow") version "7.1.1"
 }
 
 val ymlreader = FileReader(File(projectDir, "src/main/resources/plugin.yml")).readLines()

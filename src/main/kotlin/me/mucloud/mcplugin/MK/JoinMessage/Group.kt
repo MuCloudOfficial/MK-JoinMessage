@@ -1,26 +1,31 @@
 package me.mucloud.mcplugin.MK.JoinMessage
 
 import org.bukkit.OfflinePlayer
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 
 object GroupManager{
 
     private val POOL: MutableList<Group> = emptyList<Group>().toMutableList()
 
-    internal val DEFAULT_GROUP = Group(
+    private val DEFAULT_GROUP = Group(
         "default", SendMode.CHAT,
+        Sound.BLOCK_NOTE_BLOCK_PLING,
         "§7[§a+§7]{player}",
         "§7[§4-§7]{player}"
     )
 
-    internal val SPY_USERS = emptyList<Player>().toMutableList()
+    private val SPY_USERS = emptyList<Player>().toMutableList()
 
-    internal var USER_SIZE = 0;
+    private var USER_SIZE = 0;
 
     fun init(){
-        SQLITEConnector.getGroups()
-        SQLITEConnector.getUsers()
-        SQLITEConnector.getSpy()
+        SQLITEConnector.readGroup().forEach {
+            addGroup(it)
+        }
+
+        SQLITEConnector.readUser()
+        SQLITEConnector.readSpy()
     }
 
     // 0 = Success | 1 = Already Exist
@@ -61,19 +66,30 @@ object GroupManager{
         return null
     }
 
+    fun addSpyPlayer(spy: Player){
+        SPY_USERS.add(spy)
+    }
+
+    fun isSpyPlayer(target: Player): Boolean = target in SPY_USERS
+
+    fun DEFAULT_GROUP(): Group = DEFAULT_GROUP
+
     fun size(): Int = POOL.size
 
     fun userSize(): Int = USER_SIZE
 
     fun save(){
-        SQLITEConnector.flush()
+        SQLITEConnector.flushGroupManager()
     }
+
+    fun POOL() = POOL
 
 }
 
 class Group(
     private var Name: String,
     private var Mode: SendMode,
+    private var SOUND: Sound,
     private var JoinMessage: String,
     private var ExitMessage: String,
     private val Member: MutableList<OfflinePlayer> = emptyList<OfflinePlayer>().toMutableList()
@@ -83,6 +99,7 @@ class Group(
     fun getJoinMessage(): String = JoinMessage
     fun getExitMessage(): String = ExitMessage
     fun getMode(): SendMode = Mode
+    fun getSound(): Sound = SOUND
 
     fun setJoinMessage(msg: String){
         JoinMessage = msg
@@ -98,6 +115,7 @@ class Group(
 
     fun info(): String = """
         | 组名: $Name
+        | 该组的声音: ${SOUND.name}
         | 进服消息: $JoinMessage
         | 退服消息: $ExitMessage
         | 该组当前成员(${Member.size}): ${Member.toString().substring(1).dropLast(1)}

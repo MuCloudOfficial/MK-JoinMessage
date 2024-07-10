@@ -1,4 +1,4 @@
-rootProject.name = "MK-JoinMessage-KotlinEdition"
+rootProject.name = "MK-JoinMessage"
 
 pluginManagement {
     repositories {

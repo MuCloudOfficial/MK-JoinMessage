@@ -9,17 +9,14 @@ object GroupManager{
     private val POOL: MutableList<Group> = emptyList<Group>().toMutableList()
 
     private val DEFAULT_GROUP = Group(
-        "default", SendMode.CHAT,
-        Sound.BLOCK_NOTE_BLOCK_PLING,
-        "§7[§a+§7]{player}",
-        "§7[§4-§7]{player}"
+        "default", SendMode.CHAT
     )
 
     private val SPY_USERS = emptyList<Player>().toMutableList()
 
     private var USER_SIZE = 0;
 
-    fun init(){
+    internal fun init(){
         SQLITEConnector.readGroup().forEach {
             addGroup(it)
         }
@@ -28,8 +25,12 @@ object GroupManager{
         SQLITEConnector.readSpy()
     }
 
+    internal fun unInit(){
+        SQLITEConnector.flushGroupManager()
+    }
+
     // 0 = Success | 1 = Already Exist
-    fun addGroup(group: Group): Int{
+    internal fun addGroup(group: Group): Int{
         val target = getGroup(group.getName())
         if(target == null){
             POOL.add(group)
@@ -39,7 +40,7 @@ object GroupManager{
     }
 
     // 0 - Success | 1 - Not Found
-    fun delGroup(name: String): Int{
+    internal fun delGroup(name: String): Int{
         val target = getGroup(name)
         if (target != null){
             POOL.remove(target)
@@ -48,7 +49,7 @@ object GroupManager{
         return 1
     }
 
-    fun getGroup(name: String): Group?{
+    internal fun getGroup(name: String): Group?{
         POOL.forEach{
             if(it.equalsName(name)){
                 return it
@@ -57,7 +58,7 @@ object GroupManager{
         return null
     }
 
-    fun getGroup(player: OfflinePlayer): Group?{
+    internal fun getGroup(player: OfflinePlayer): Group?{
         POOL.forEach{ g ->
             if(g.contains(player)){
                 return g
@@ -66,32 +67,30 @@ object GroupManager{
         return null
     }
 
-    fun addSpyPlayer(spy: Player){
+    internal fun addSpyPlayer(spy: Player){
         SPY_USERS.add(spy)
     }
 
-    fun isSpyPlayer(target: Player): Boolean = target in SPY_USERS
+    internal fun isSpyPlayer(target: Player): Boolean = target in SPY_USERS
 
-    fun DEFAULT_GROUP(): Group = DEFAULT_GROUP
+    internal fun DEFAULT_GROUP(): Group = DEFAULT_GROUP
 
-    fun size(): Int = POOL.size
+    internal fun size(): Int = POOL.size
 
-    fun userSize(): Int = USER_SIZE
+    internal fun SPY_SIZE(): Int = SPY_USERS.size
 
-    fun save(){
-        SQLITEConnector.flushGroupManager()
-    }
+    internal fun POOL(): List<Group> = POOL
 
-    fun POOL() = POOL
+    internal fun SPY(): List<Player> = SPY_USERS
 
 }
 
 class Group(
     private var Name: String,
-    private var Mode: SendMode,
-    private var SOUND: Sound,
-    private var JoinMessage: String,
-    private var ExitMessage: String,
+    private var Mode: SendMode = SendMode.CHAT,
+    private var SOUND: Sound = Sound.BLOCK_NOTE_BLOCK_PLING,
+    private var JoinMessage: String = "§7[§a+§7]{player}",
+    private var ExitMessage: String = "§7[§4-§7]{player}",
     private val Member: MutableList<OfflinePlayer> = emptyList<OfflinePlayer>().toMutableList()
 ){
 
@@ -107,6 +106,10 @@ class Group(
 
     fun setExitMessage(msg: String){
         ExitMessage = msg
+    }
+
+    fun setSound(sound: Sound){
+        SOUND = sound
     }
 
     fun addMember(player: OfflinePlayer){

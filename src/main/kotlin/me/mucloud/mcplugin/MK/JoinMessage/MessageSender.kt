@@ -1,5 +1,7 @@
 package me.mucloud.mcplugin.MK.JoinMessage
 
+import me.clip.placeholderapi.PlaceholderAPI
+import net.md_5.bungee.api.ChatColor
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
@@ -39,6 +41,15 @@ object MessageSender {
         ENABLE_LOGGER = false
     }
 
+    fun convert(request: Player, msg: String): String{
+        val colorConverted = ChatColor.translateAlternateColorCodes('&', msg)
+        return if(Main.isPAPIHook()){
+            PlaceholderAPI.setPlaceholders(request, colorConverted)
+        }else{
+            colorConverted.replace("{player}", request.name)
+        }
+    }
+
     internal fun sendMessage(lvl: MessageLevel, target: CommandSender, msg: String){
         target.sendMessage("$lvl$msg")
         toLog(lvl, "[Plugin -> CommandSender(${target.name})] $msg")
@@ -60,11 +71,6 @@ object MessageSender {
                 sendMessage(lvl, it as Player, msg)
             }
         }
-    }
-
-    internal fun broadcastMessage(lvl: MessageLevel, msg: String){
-        Bukkit.broadcastMessage("$lvl$msg")
-        toLog(lvl, "[Plugin -> AllPlayer] $msg")
     }
 
     private fun toLog(lvl: MessageLevel, msg: String){

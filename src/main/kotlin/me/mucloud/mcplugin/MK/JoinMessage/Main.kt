@@ -5,36 +5,50 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class Main: JavaPlugin() {
 
-    private var PAPI_HOOK = false
-
     override fun onEnable(){
         MessageSender.init(this)
+        checkPapiHook()
         Configuration.preInit(this)
         SQLITEConnector.init(this)
         Configuration.init()
         GroupManager.init()
-        regCommand()
+        CommandManager.init(this)
+        Listener.init(this)
+        Updater.init(this)
+        MessageSender.sendToConsole(MessageLevel.FINISH, "已成功加载 ${Prefix(false)}")
     }
 
     override fun onDisable(){
-        SQLITEConnector.flushAll()
+        Updater.unInit()
+        Listener.unInit()
+        CommandManager.unInit()
+        GroupManager.unInit()
+        Configuration.unInit()
+        SQLITEConnector.unInit()
+        MessageSender.sendToConsole(MessageLevel.FINISH, "已成功卸载 ${Prefix(false)}")
     }
-
-    private fun regCommand() = getCommand("mkjm")?.setExecutor(CommandManager)
 
     private fun checkPapiHook(){
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
             PAPI_HOOK = true
+            MessageSender.sendToConsole(MessageLevel.FINISH, "已检测到 PlaceholderAPI, 启动 PAPI 附加功能")
+        }else{
+            MessageSender.sendToConsole(MessageLevel.WARN, "没有检测到 PlaceholderAPI, 已忽略")
         }
     }
 
     companion object{
+
+        private var PAPI_HOOK = false
+
         internal fun Prefix(useLog: Boolean): String =
             if(useLog){
                 "MK-JoinMessage"
             }else{
                 "§bMK§7-§6JoinMessage§f"
             }
+
+        internal fun isPAPIHook(): Boolean = PAPI_HOOK
     }
 
 }

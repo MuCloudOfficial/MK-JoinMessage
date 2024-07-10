@@ -68,12 +68,29 @@ tasks{
         options.encoding = "UTF-8"
     }
 
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
+        kotlinOptions.jvmTarget = "11"
+    }
+
     test{
         useJUnitPlatform()
     }
 
     jar{
         archiveFileName.set("MK-JoinMessage-KotlinEdition_${project.version}.jar")
+    }
+
+    shadowJar{
+
+        archiveFileName = "${rootProject.name}_$version.$DEV.jar"
+
+        dependencies{
+            include(dependency("org.jetbrains.kotlin:.*"))
+            include(dependency("org.jetbrains.kotlinx:.*"))
+            include(dependency("com.zaxxer:HikariCP"))
+        }
+        relocate("kotlin", "me.mucloud.mcplugin.MK.JoinMessage.libs.kotlin")
+        relocate("com.zaxxer.hikari", "me.mucloud.mcplugin.MK.JoinMessage.libs.com.zaxxer.hikari")
     }
 
 }

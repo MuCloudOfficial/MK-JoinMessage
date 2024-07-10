@@ -26,6 +26,7 @@ object Configuration {
         Pair("conf.version", "1"),
         Pair("db.autoSave", "true"),
         Pair("plugin.reportToLogFile", "true"),
+        Pair("db.use", "SQLITE") // SQLITE | YAML(计划的) | MONGO(计划的) | MYSQL(计划的)
     )
 
     internal fun preInit(main: Main){
@@ -49,6 +50,12 @@ object Configuration {
         SQLITEConnector.readConf().forEach {
             Conf[it.key] = it.value
         }
+        MessageSender.sendToConsole(MessageLevel.FINISH, "已加载 Configuration 模块")
+    }
+
+    internal fun unInit(){
+        SQLITEConnector.flushConf()
+        MessageSender.sendToConsole(MessageLevel.FINISH, "已卸载 Configuration 模块")
     }
 
     internal fun getDev(): Int = dev
@@ -61,6 +68,20 @@ object Configuration {
 
     internal fun save(){
         SQLITEConnector.readConf()
+    }
+
+    internal fun getVersion(zh: Boolean = true, isView: Boolean = true) = if(isView){
+        if(zh){
+            VersionCNView
+        }else{
+            VersionView
+        }
+    }else{
+        if(zh){
+            VersionCN
+        }else{
+            Version
+        }
     }
 
 }
@@ -199,7 +220,7 @@ object Updater {
 
     internal fun getType(): String = Type
 
-    internal fun stopTask(){
+    internal fun unInit(){
         UpdateTimerTask.cancel()
     }
 

@@ -3,11 +3,9 @@ package me.mucloud.mcplugin.MK.JoinMessage
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.bukkit.Bukkit
-import org.bukkit.OfflinePlayer
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import java.io.File
-import java.io.ObjectInputFilter.Config
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.Statement
@@ -30,6 +28,7 @@ internal object SQLITEConnector{
         }).connection
 
         initStructure()
+        MessageSender.sendToConsole(MessageLevel.FINISH, "已加载 SQLITE CONN 模块")
     }
 
     private const val SQL_CONF_STRUCT =
@@ -199,9 +198,10 @@ internal object SQLITEConnector{
         }
     }
 
-    fun close(){
+    fun unInit(){
         PS.close()
         CONN.close()
+        MessageSender.sendToConsole(MessageLevel.FINISH, "已卸载 Configuration 模块")
     }
 
 }

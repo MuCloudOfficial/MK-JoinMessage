@@ -2,8 +2,7 @@
 name: MK-JoinMessage
 main: me.mucloud.mcplugin.MK.JoinMessage.Main
 version: SakuraOcean V2
-versionCN: 樱花の海
-verType: DEV
+versionCN: 樱花の海 · V2
 internalVersion: 1
 authors: [ Mu_Cloud ]
 #====================================================

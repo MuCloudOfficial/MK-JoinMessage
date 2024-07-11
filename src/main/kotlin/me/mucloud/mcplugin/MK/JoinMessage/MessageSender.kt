@@ -46,7 +46,7 @@ object MessageSender {
     fun convert(request: Player, msg: String): String{
         val colorConverted = ChatColor.translateAlternateColorCodes('&', msg)
         return if(Main.isPAPIHook()){
-            PlaceholderAPI.setPlaceholders(request, colorConverted)
+            PlaceholderAPI.setPlaceholders(request, colorConverted.replace("{player}", request.name))
         }else{
             colorConverted.replace("{player}", request.name)
         }

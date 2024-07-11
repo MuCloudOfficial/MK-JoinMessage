@@ -6,14 +6,8 @@ versionCN: 樱花の海 · V2
 internalVersion: 1
 authors: [ Mu_Cloud ]
 #====================================================
-versionCNV: "§d§l樱花§7§lの§3§l海"
-versionV: "§d§lSakura§3§lOcean"
-#====================================================
-libraries:
-  - "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
-  - "org.jetbrains.kotlin:kotlin-stdlib-common:1.9.21"
-  - "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.21"
-  - "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.21"
+versionCNV: "§d樱花§7の§3海 §6§lV2"
+versionV: "§dSakura§3Ocean §6§lV2"
 #====================================================
 softdepend: [ PlaceholderAPI ]
 #====================================================

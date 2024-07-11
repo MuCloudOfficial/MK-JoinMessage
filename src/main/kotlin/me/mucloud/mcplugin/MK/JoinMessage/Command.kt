@@ -20,12 +20,17 @@ object CommandManager: CommandExecutor{
         if(MAIN != null){
             MAIN!!.getCommand("mkjm")!!.setExecutor(null)
             MessageSender.sendToConsole(MessageLevel.FINISH, "已卸载 Command 模块")
+        }else{
+            MessageSender.sendToConsole(MessageLevel.WARN, "未加载 Command 模块，跳过关闭")
         }
-        MessageSender.sendToConsole(MessageLevel.WARN, "未加载 Command 模块，跳过关闭")
     }
 
     override fun onCommand(sender: CommandSender, cmd: Command, s: String, ss: Array<out String>): Boolean {
         if(cmd.name.equals("mkjm", true)){
+            if(!sender.hasPermission("mkjm.admin")){
+                MessageSender.sendMessage(MessageLevel.ERR, sender, "你没有权限执行此操作")
+                return true
+            }
             if(ss.isEmpty()){
                 CMD_INFO(sender)
             }else{
@@ -59,8 +64,8 @@ object CommandManager: CommandExecutor{
                 §7§l| ${Main.Prefix(false)}  §a${Updater.getType()}.${Configuration.getVersion(zh = false, isView = true)} | ${Configuration.getVersion()}    §r§7第 §4${Configuration.getDev()} §7开发版本
                 §7§l| §6作者：${Configuration.getAuthorList()}
                 §7§l| ===================================================
-                §7§l| §b项目站：https://gitee.com/MuCloudOfficial/${Main.Prefix(false)}
-                §7§l| §b项目站：https://github.com/MuCloudOfficial/${Main.Prefix(false)}
+                §7§l| §b项目站：https://gitee.com/MuCloudOfficial/${Main.Prefix(true)}
+                §7§l| §b项目站：https://github.com/MuCloudOfficial/${Main.Prefix(true)}
                 §7§l| ===================================================
                 §7§l| §4对本插件的所有建议与 BUG 提交务必提交 ISSUE 至项目站，这对插件的优化改良极为重要
                 §7§l| ===================================================
@@ -78,7 +83,7 @@ object CommandManager: CommandExecutor{
                 §7§l| §b/mkjm setPlayer [玩家名] [组名]         §b指定一个玩家进入组
                 §7§l| §b/mkjm setSpy [玩家]        §b将指定的用户设置为静默进服
                 §7§l| §b/mkjm listSpy        §b列出静默进服玩家
-                §7§l| ===== MADE IN VOID LAND & BASED ON SPIGOT API =====
+                §7§l| ==== MADE IN SAKURA OCEAN & BASED ON SPIGOT API ====
             """.trimIndent())
     }
 

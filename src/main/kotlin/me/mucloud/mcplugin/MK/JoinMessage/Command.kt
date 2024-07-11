@@ -36,15 +36,15 @@ object CommandManager: CommandExecutor{
             }else{
                 when(ss[0].lowercase()){
                     "reload" -> CMD_reload(sender)
-                    "listGroup" -> CMD_listGroup(sender)
-                    "addGroup" -> CMD_addGroup(sender, ss.drop(1))
-                    "delGroup" -> CMD_delGroup(sender, ss.drop(1))
-                    "setJoinMessage" -> CMD_setJoinMessage(sender, ss.drop(1))
-                    "setExitMessage" -> CMD_setExitMessage(sender, ss.drop(1))
-                    "setSound" -> CMD_setSound(sender, ss.drop(1))
-                    "setPlayer" -> CMD_setPlayer(sender, ss.drop(1))
-                    "setSpy" -> CMD_setSpy(sender, ss.drop(1))
-                    "listSpy" -> CMD_listSpy(sender)
+                    "listgroup" -> CMD_listGroup(sender)
+                    "addgroup" -> CMD_addGroup(sender, ss.drop(1))
+                    "delgroup" -> CMD_delGroup(sender, ss.drop(1))
+                    "setjoinmessage" -> CMD_setJoinMessage(sender, ss.drop(1))
+                    "setexitmessage" -> CMD_setExitMessage(sender, ss.drop(1))
+                    "setsound" -> CMD_setSound(sender, ss.drop(1))
+                    "setplayer" -> CMD_setPlayer(sender, ss.drop(1))
+                    "setspy" -> CMD_setSpy(sender, ss.drop(1))
+                    "listspy" -> CMD_listSpy(sender)
                 }
             }
             return true
@@ -110,13 +110,14 @@ object CommandManager: CommandExecutor{
         SQLITEConnector.init(MAIN!!)
         Configuration.init()
         GroupManager.init()
+        MessageSender.sendMessage(MessageLevel.FINISH, sender, "${Main.Prefix(false)} §a重载完毕")
     }
 
-    private fun CMD_yamldb(sender: CommandSender){
+    private fun CMD_yamldb(){
         //todo("未实现的")
     }
 
-    private fun CMD_sqlitedb(sender: CommandSender){
+    private fun CMD_sqlitedb(){
         //todo("未实现的")
     }
 
@@ -136,8 +137,12 @@ object CommandManager: CommandExecutor{
 
     private fun CMD_delGroup(sender: CommandSender, args: List<String>){
         if(args.size == 1){
-            if(GroupManager.delGroup(args[0]) == 1){
+            val res = GroupManager.delGroup(args[0])
+            if(res == 1){
                 MessageSender.sendMessage(MessageLevel.ERR, sender, "该组不存在")
+                return
+            }else if(res == 2){
+                MessageSender.sendMessage(MessageLevel.ERR, sender, "default 组不可删除")
                 return
             }
             MessageSender.sendMessage(MessageLevel.FINISH, sender, "成功删除了 ${args[0]} 组")

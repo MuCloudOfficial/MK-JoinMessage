@@ -17,6 +17,7 @@ object GroupManager{
     private var USER_SIZE = 0;
 
     internal fun init(){
+        addGroup(DEFAULT_GROUP)
         SQLITEConnector.readGroup().forEach {
             addGroup(it)
         }
@@ -39,10 +40,13 @@ object GroupManager{
         return 1
     }
 
-    // 0 - Success | 1 - Not Found
+    // 0 - Success | 1 - Not Found | 2 - Not Allowed
     internal fun delGroup(name: String): Int{
         val target = getGroup(name)
         if (target != null){
+            if(target == DEFAULT_GROUP){
+                return 2
+            }
             POOL.remove(target)
             return 0
         }

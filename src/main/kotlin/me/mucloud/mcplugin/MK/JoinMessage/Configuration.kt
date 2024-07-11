@@ -35,10 +35,10 @@ object Configuration {
         Yaml().load<Map<String, Any>>(main.getResource("plugin.yml")).also {
             Version = it["version"] as String
             VersionCN = it["versionCN"] as String
-            VersionView = it["versionView"] as String
-            VersionCNView = it["versionCNView"] as String
+            VersionView = it["versionV"] as String
+            VersionCNView = it["versionCNV"] as String
             AuthorList = it["authors"] as List<String>
-            dev = it["dev"] as Int
+            dev = it["internalVersion"] as Int
         }
 
         MessageSender.sendToConsole(MessageLevel.INFO, "正在加载 MK-JoinMessage | $Version | $VersionCN | DEV.$dev")
@@ -91,7 +91,7 @@ object Updater {
     private val Source: String = "https://gitee.com/MuCloudOfficial/MK-JoinMessage"
 
     private val Tags: String = "https://gitee.com/api/v5/repos/MuCloudOfficial/MK-JoinMessage/tags?sort=updated&direction=asc"
-    private val Changelog: String = "/raw/master/CHANGELOG.yml"
+    private val Changelog: String = "/raw/Kotlin-dev/CHANGELOG.yml"
 
     private var RemoteDev: Int = 0
     private var RemoteRel: Int = 0
@@ -99,7 +99,7 @@ object Updater {
 
     private var CHANGELOG_READER: Yaml = Yaml()
 
-    private lateinit var UpdateTimerTask: BukkitTask
+    private var UpdateTimerTask: BukkitTask? = null
 
     fun init(main: Main){
 
@@ -221,7 +221,9 @@ object Updater {
     internal fun getType(): String = Type
 
     internal fun unInit(){
-        UpdateTimerTask.cancel()
+        if(UpdateTimerTask != null && !UpdateTimerTask!!.isCancelled){
+            UpdateTimerTask!!.cancel()
+        }
     }
 
 }

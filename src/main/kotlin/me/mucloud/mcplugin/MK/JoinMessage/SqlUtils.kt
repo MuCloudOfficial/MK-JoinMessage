@@ -24,22 +24,23 @@ internal object SQLITEConnector{
             it.isAutoCommit = true
             it.maximumPoolSize = 10
             it.minimumIdle = 10
-            it.maxLifetime = 2000
+            it.maxLifetime = 30000
         }).connection
 
+        STAT = CONN.createStatement()
         initStructure()
         MessageSender.sendToConsole(MessageLevel.FINISH, "已加载 SQLITE CONN 模块")
     }
 
     private const val SQL_CONF_STRUCT =
         "CREATE TABLE CONF(" +
-        "ID INT PRIMARY KEY AUTOINCREMENT," +
+        "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
         "KEY TEXT NOT NULL," +
         "VAL BLOB NOT NULL)"
 
     private const val SQL_GROUP_STRUCT =
         "CREATE TABLE MKG(" +
-        "ID INT PRIMARY KEY AUTOINCREMENT," +
+        "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
         "NAME TEXT NOT NULL," +
         "MODE TEXT NOT NULL," +
         "SOUND TEXT NOT NULL," +
@@ -48,14 +49,14 @@ internal object SQLITEConnector{
 
     private const val SQL_USER_STRUCT =
         "CREATE TABLE USER(" +
-        "ID INT PRIMARY KEY AUTOINCREMENT," +
+        "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
         "NAME TEXT NOT NULL," +
         "UUID TEXT NOT NULL," +
         "GID TEXT NOT NULL)"
 
     private const val SQL_SPY_STRUCT =
         "CREATE TABLE SPY(" +
-        "ID INT PRIMARY KEY AUTOINCREMENT," +
+        "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
         "NAME TEXT NOT NULL," +
         "UUID TEXT NOT NULL)"
 

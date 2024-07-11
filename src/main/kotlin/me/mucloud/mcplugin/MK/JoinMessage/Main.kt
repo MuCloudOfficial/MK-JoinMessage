@@ -6,9 +6,9 @@ import org.bukkit.plugin.java.JavaPlugin
 class Main: JavaPlugin() {
 
     override fun onEnable(){
+        Configuration.preInit(this)
         MessageSender.init(this)
         checkPapiHook()
-        Configuration.preInit(this)
         SQLITEConnector.init(this)
         Configuration.init()
         GroupManager.init()

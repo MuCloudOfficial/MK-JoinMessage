@@ -32,6 +32,7 @@ object MessageSender {
         if(!LOGFILE.exists()){
             LOGFILE.createNewFile()
         }
+        toLog(MessageLevel.FINISH, "File logger created.")
     }
 
     fun closeLogger(){
@@ -39,6 +40,7 @@ object MessageSender {
             return
         }
         ENABLE_LOGGER = false
+        toLog(MessageLevel.FINISH, "File logger closed.")
     }
 
     fun convert(request: Player, msg: String): String{

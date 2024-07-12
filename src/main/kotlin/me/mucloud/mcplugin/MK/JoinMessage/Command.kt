@@ -32,19 +32,24 @@ object CommandManager: CommandExecutor{
                 return true
             }
             if(ss.isEmpty()){
-                CMD_INFO(sender)
+                CMD_info(sender)
             }else{
                 when(ss[0].lowercase()){
+                    "info" -> CMD_info(sender)
                     "reload" -> CMD_reload(sender)
                     "listgroup" -> CMD_listGroup(sender)
                     "addgroup" -> CMD_addGroup(sender, ss.drop(1))
                     "delgroup" -> CMD_delGroup(sender, ss.drop(1))
+                    "infogroup" -> CMD_infoGroup(sender, ss.drop(1))
                     "setjoinmessage" -> CMD_setJoinMessage(sender, ss.drop(1))
                     "setexitmessage" -> CMD_setExitMessage(sender, ss.drop(1))
                     "setsound" -> CMD_setSound(sender, ss.drop(1))
                     "setplayer" -> CMD_setPlayer(sender, ss.drop(1))
                     "setspy" -> CMD_setSpy(sender, ss.drop(1))
                     "listspy" -> CMD_listSpy(sender)
+                    else -> {
+                        MessageSender.sendMessage(MessageLevel.ERR, sender, "未知的子指令")
+                    }
                 }
             }
             return true
@@ -58,7 +63,7 @@ object CommandManager: CommandExecutor{
      * | 显示插件版本和指令信息
      *
      */
-    private fun CMD_INFO(sender: CommandSender){
+    private fun CMD_info(sender: CommandSender){
         MessageSender.sendMessage(MessageLevel.NULL, sender, """
 
                 §7§l| ${Main.Prefix(false)}  §a${Updater.getType()}.${Configuration.getVersion(zh = false, isView = true)} | ${Configuration.getVersion()}    §r§7第 §4${Configuration.getDev()} §7开发版本
@@ -77,6 +82,7 @@ object CommandManager: CommandExecutor{
                 §7§l| §b高级组件指令: 当数据库为 SQLITE 时可以使用
                 §7§l| §b/mkjm addGroup [组名]         §b添加一个组
                 §7§l| §b/mkjm delGroup [组名]         §b删除一个组
+                §7§l| §b/mkjm infoGroup [组名]         §b获取指定组的信息
                 §7§l| §b/mkjm setJoinMessage [组名] [进服消息]         §b给指定组设置进服消息
                 §7§l| §b/mkjm setExitMessage [组名] [进服消息]         §b给指定组设置离服消息
                 §7§l| §b/mkjm setSound [组名] [声音键名]        §b设置该组进服时的声音
@@ -151,6 +157,19 @@ object CommandManager: CommandExecutor{
         }
     }
 
+    private fun CMD_infoGroup(sender: CommandSender, args: List<String>){
+        if(args.size == 1){
+            val res = GroupManager.getGroup(args[0])
+            if(res == null){
+                MessageSender.sendMessage(MessageLevel.ERR, sender, "该组不存在")
+                return
+            }
+            MessageSender.sendMessage(MessageLevel.NULL, sender, res.info())
+        }else{
+            MessageSender.sendMessage(MessageLevel.ERR, sender, "参数错误")
+        }
+    }
+
     private fun CMD_setJoinMessage(sender: CommandSender, args: List<String>){
         if(args.size == 2){
             val g = GroupManager.getGroup(args[0])
@@ -213,6 +232,17 @@ object CommandManager: CommandExecutor{
                 MessageSender.sendMessage(MessageLevel.ERR, sender, "该组不存在")
                 return
             }
+            val og = GroupManager.getGroup(p)
+            if(og == null){
+                GroupManager.delSpyPlayer(p)
+            }else{
+                if(og.equalsName(g.getName())){
+                    MessageSender.sendMessage(MessageLevel.ERR, sender, "该玩家已在该组中")
+                    return
+                }else{
+                    og.delMember(p)
+                }
+            }
             g.addMember(p)
             MessageSender.sendMessage(MessageLevel.FINISH, sender, "已成功将 ${p.name} 转移至 ${g.getName()} 组")
         }
@@ -225,6 +255,11 @@ object CommandManager: CommandExecutor{
                 MessageSender.sendMessage(MessageLevel.ERR, sender, "该用户不存在")
                 return
             }
+            if(GroupManager.isSpyPlayer(p)){
+                MessageSender.sendMessage(MessageLevel.ERR, sender, "该玩家已经是静默状态")
+                return
+            }
+            GroupManager.getGroup(p)!!.delMember(p)
             GroupManager.addSpyPlayer(p)
             MessageSender.sendMessage(MessageLevel.FINISH, sender, "已成功将 ${p.name} 设置为静默状态")
         }
@@ -234,10 +269,11 @@ object CommandManager: CommandExecutor{
         MessageSender.sendMessage(MessageLevel.INFO, sender, "当前静默状态玩家(${GroupManager.SPY_SIZE()}):")
         val res = StringBuilder()
         GroupManager.SPY().forEach {
-            if(GroupManager.SPY().lastIndexOf(it) == 1){
+            if(GroupManager.SPY().lastIndexOf(it) == 0){
                 res.append(it.name)
+            }else{
+                res.append(it.name + ", ")
             }
-            res.append("${it.name}, ")
         }
         MessageSender.sendMessage(MessageLevel.INFO, sender, res.toString())
     }

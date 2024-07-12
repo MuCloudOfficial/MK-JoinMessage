@@ -52,7 +52,7 @@ internal object SQLITEConnector{
         "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
         "NAME TEXT NOT NULL," +
         "UUID TEXT NOT NULL," +
-        "GID TEXT NOT NULL)"
+        "GNAME TEXT NOT NULL)"
 
     private const val SQL_SPY_STRUCT =
         "CREATE TABLE SPY(" +
@@ -139,15 +139,12 @@ internal object SQLITEConnector{
         if(!checkIntegrity_user()){
             return
         }
-        STAT.executeQuery("select USER.NAME, USER.UUID, MKG.NAME from USER, MKG where USER.GID == MKG.ID").also {
+        STAT.executeQuery("select USER.NAME, USER.UUID, USER.GNAME from USER, MKG where USER.GNAME == MKG.NAME").also {
             while (it.next()){
-                val g = GroupManager.getGroup(it.getString("MKG.NAME")) ?: GroupManager.DEFAULT_GROUP()
+                val g = GroupManager.getGroup(it.getString("GNAME"))
                 val uid = UUID.fromString(it.getString("UUID"))
-                var player = Bukkit.getPlayer(uid)
-                if(player == null){
-                    player = Bukkit.getOfflinePlayer(uid) as Player
-                }
-                g.addMember(player)
+                val player = Bukkit.getOfflinePlayer(uid)
+                g!!.addMember(player)
             }
         }
     }
@@ -159,22 +156,16 @@ internal object SQLITEConnector{
         STAT.executeQuery("select * from SPY").also {
             while(it.next()){
                 val uid = UUID.fromString(it.getString("UUID"))
-                var player = Bukkit.getPlayer(uid)
-                if(player == null){
-                    player = Bukkit.getOfflinePlayer(uid) as Player
-                }
+                val player = Bukkit.getOfflinePlayer(uid)
                 GroupManager.addSpyPlayer(player)
             }
         }
     }
 
-    fun flushAll(){
-        flushConf()
-        flushGroupManager()
-    }
-
     fun flushConf(){
         DB_initConf()
+        STAT.executeUpdate("delete from CONF")
+        STAT.executeUpdate("update sqlite_sequence set seq = 0 where name = 'CONF'")
         val ptr = "insert into CONF(KEY, VAL) VALUES(?,?)"
         Configuration.getConfiguration().forEach{
             PS = CONN.prepareStatement(ptr)
@@ -188,21 +179,43 @@ internal object SQLITEConnector{
         DB_initGroup()
         DB_initUser()
         DB_initSpy()
+        STAT.executeUpdate("delete from MKG")
+        STAT.executeUpdate("delete from USER")
+        STAT.executeUpdate("delete from SPY")
+        STAT.executeUpdate("update sqlite_sequence set seq = 0 where name = 'MKG'")
+        STAT.executeUpdate("update sqlite_sequence set seq = 0 where name = 'USER'")
+        STAT.executeUpdate("update sqlite_sequence set seq = 0 where name = 'SPY'")
         val ptrGroup = "insert into MKG(NAME, MODE, SOUND, JOINMESSAGE, EXITMESSAGE) VALUES(?,?,?,?,?)"
-        GroupManager.POOL().forEach {
+        val ptrUser = "insert into USER(NAME, UUID, GNAME) VALUES (?,?,?)"
+        GroupManager.POOL().forEach { g ->
             PS = CONN.prepareStatement(ptrGroup)
-            PS.setString(1, it.getName())
-            PS.setString(2, it.getMode().name)
-            PS.setString(3, it.getSound().name)
-            PS.setString(4, it.getJoinMessage())
-            PS.setString(5, it.getExitMessage())
+            PS.setString(1, g.getName())
+            PS.setString(2, g.getMode().name)
+            PS.setString(3, g.getSound().name)
+            PS.setString(4, g.getJoinMessage())
+            PS.setString(5, g.getExitMessage())
+            PS.executeUpdate()
+            g.getMembers().forEach{ p ->
+                PS = CONN.prepareStatement(ptrUser)
+                PS.setString(1, p.name)
+                PS.setString(2, p.uniqueId.toString())
+                PS.setString(3, g.getName())
+                PS.executeUpdate()
+            }
+        }
+        GroupManager.SPY().forEach {
+            val ptrSpy = "insert into SPY(NAME, UUID) VALUES(?,?)"
+            PS = CONN.prepareStatement(ptrSpy)
+            PS.setString(1, it.name)
+            PS.setString(2, it.uniqueId.toString())
+            PS.executeUpdate()
         }
     }
 
     fun unInit(){
         PS.close()
         CONN.close()
-        MessageSender.sendToConsole(MessageLevel.FINISH, "已卸载 Configuration 模块")
+        MessageSender.sendToConsole(MessageLevel.FINISH, "已卸载 SQLITE CONN 模块")
     }
 
 }

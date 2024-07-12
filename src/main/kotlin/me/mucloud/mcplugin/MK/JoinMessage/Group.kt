@@ -12,16 +12,16 @@ object GroupManager{
         "default", SendMode.CHAT
     )
 
-    private val SPY_USERS = emptyList<Player>().toMutableList()
-
-    private var USER_SIZE = 0;
+    private val SPY_USERS = emptyList<OfflinePlayer>().toMutableList()
 
     internal fun init(){
-        addGroup(DEFAULT_GROUP)
         SQLITEConnector.readGroup().forEach {
             addGroup(it)
         }
 
+        if(getGroup("default") == null){
+            addGroup(DEFAULT_GROUP)
+        }
         SQLITEConnector.readUser()
         SQLITEConnector.readSpy()
     }
@@ -62,7 +62,7 @@ object GroupManager{
         return null
     }
 
-    internal fun getGroup(player: OfflinePlayer): Group?{
+    internal fun getGroup(player: Player): Group?{
         POOL.forEach{ g ->
             if(g.contains(player)){
                 return g
@@ -71,13 +71,34 @@ object GroupManager{
         return null
     }
 
-    internal fun addSpyPlayer(spy: Player){
+    internal fun addSpyPlayer(spy: OfflinePlayer): Boolean{
+        if(isSpyPlayer(spy)){
+            return false
+        }
         SPY_USERS.add(spy)
+        return true
     }
 
-    internal fun isSpyPlayer(target: Player): Boolean = target in SPY_USERS
+    internal fun delSpyPlayer(spy: OfflinePlayer): Boolean{
+        SPY_USERS.forEach {
+            if(spy.uniqueId == it.uniqueId){
+                SPY_USERS.remove(it)
+                return true
+            }
+        }
+        return false
+    }
 
-    internal fun DEFAULT_GROUP(): Group = DEFAULT_GROUP
+    internal fun isSpyPlayer(target: OfflinePlayer): Boolean {
+        SPY_USERS.forEach {
+            if(target.uniqueId == it.uniqueId){
+                return true
+            }
+        }
+        return false
+    }
+
+    internal fun DEFAULT_GROUP(): Group = getGroup("default")!!
 
     internal fun size(): Int = POOL.size
 
@@ -85,7 +106,7 @@ object GroupManager{
 
     internal fun POOL(): List<Group> = POOL
 
-    internal fun SPY(): List<Player> = SPY_USERS
+    internal fun SPY(): List<OfflinePlayer> = SPY_USERS
 
 }
 
@@ -93,8 +114,8 @@ class Group(
     private var Name: String,
     private var Mode: SendMode = SendMode.CHAT,
     private var SOUND: Sound = Sound.BLOCK_NOTE_BLOCK_PLING,
-    private var JoinMessage: String = "§7[§a+§7]{player}",
-    private var ExitMessage: String = "§7[§4-§7]{player}",
+    private var JoinMessage: String = "§7[§a+§7] {player}",
+    private var ExitMessage: String = "§7[§4-§7] {player}",
     private val Member: MutableList<OfflinePlayer> = emptyList<OfflinePlayer>().toMutableList()
 ){
 
@@ -116,22 +137,54 @@ class Group(
         SOUND = sound
     }
 
-    fun addMember(player: OfflinePlayer){
+    fun addMember(player: OfflinePlayer): Boolean{
+        if(contains(player)){
+            return false
+        }
         Member.add(player)
+        return true
     }
 
-    fun info(): String = """
-        | 组名: $Name
-        | 该组的声音: ${SOUND.name}
-        | 进服消息: $JoinMessage
-        | 退服消息: $ExitMessage
-        | 该组当前成员(${Member.size}): ${Member.toString().substring(1).dropLast(1)}
-    """.trimIndent()
+    fun delMember(player: OfflinePlayer): Boolean{
+        Member.forEach {
+            if(player.uniqueId == it.uniqueId){
+                Member.remove(it)
+                return true
+            }
+        }
+        return false
+    }
+
+    fun getMembers(): List<OfflinePlayer> = Member
+
+    fun info(): String {
+        val res = StringBuilder()
+        res.append("| 组名: $Name\n")
+        res.append("| 该组的声音: ${SOUND.name}\n")
+        res.append("| 进服消息: $JoinMessage\n")
+        res.append("| 退服消息: $ExitMessage\n")
+        res.append("| 该组当前成员(${Member.size}):\n| ")
+        Member.forEach {
+            if(Member.lastIndexOf(it) == 0){
+                res.append(it.name)
+            }else{
+                res.append(it.name + ", ")
+            }
+        }
+        return res.toString()
+    }
 
     fun equalsName(name: String): Boolean{
         return name == Name
     }
 
-    fun contains(player: OfflinePlayer): Boolean = Member.contains(player)
+    fun contains(player: OfflinePlayer): Boolean{
+        Member.forEach {
+            if(player.uniqueId == it.uniqueId){
+                return true
+            }
+        }
+        return false
+    }
 
 }

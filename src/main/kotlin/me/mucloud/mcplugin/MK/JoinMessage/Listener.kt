@@ -6,6 +6,7 @@ import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import javax.swing.GroupLayout
 
 object Listener: Listener{
 
@@ -21,10 +22,14 @@ object Listener: Listener{
 
     @EventHandler fun onJoinServerListener(e: PlayerJoinEvent){
         val targetP = e.player
-        val targetG = GroupManager.getGroup(targetP) ?: GroupManager.DEFAULT_GROUP()
         if(GroupManager.isSpyPlayer(targetP)){
             e.joinMessage = null
         }else{
+            var targetG = GroupManager.getGroup(targetP)
+            if(targetG == null){
+                targetG = GroupManager.DEFAULT_GROUP()
+                targetG.addMember(targetP)
+            }
             e.joinMessage = MessageSender.convert(targetP, targetG.getJoinMessage())
             Bukkit.getOnlinePlayers().forEach{
                 it.playSound(it, targetG.getSound(), 1.0F, 1.0F)
@@ -34,11 +39,11 @@ object Listener: Listener{
 
     @EventHandler fun onExitServerListener(e: PlayerQuitEvent){
         val targetP = e.player
-        val targetG = GroupManager.getGroup(targetP) ?: GroupManager.DEFAULT_GROUP()
+        val targetG = GroupManager.getGroup(targetP)
         if(GroupManager.isSpyPlayer(targetP)){
             e.quitMessage = null
         }else{
-            e.quitMessage = MessageSender.convert(targetP, targetG.getExitMessage())
+            e.quitMessage = MessageSender.convert(targetP, targetG!!.getExitMessage())
             Bukkit.getOnlinePlayers().forEach{
                 it.playSound(it, targetG.getSound(), 1.0F, 0F)
             }

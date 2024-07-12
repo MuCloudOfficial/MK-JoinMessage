@@ -9,13 +9,13 @@ enum class SendMode{
 
     companion object{
         fun match(id: String): SendMode{
-            when(id.uppercase()){
+            return when(id.uppercase()){
                 "NULL" -> NULL
                 "CHAT" -> CHAT
                 "ACTIONBAR" -> ACTIONBAR
                 "BOSSBAR" -> BOSSBAR
+                else -> throw UnsupportedOperationException("不支持的消息显示格式")
             }
-            throw UnsupportedOperationException("不支持的消息显示格式")
         }
     }
 

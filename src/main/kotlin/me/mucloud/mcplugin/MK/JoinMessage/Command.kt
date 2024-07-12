@@ -233,7 +233,7 @@ object CommandManager: CommandExecutor{
                 return
             }
             val og = GroupManager.getGroup(p)
-            if(og == null){
+            if(og == null || GroupManager.isSpyPlayer(p)){
                 GroupManager.delSpyPlayer(p)
             }else{
                 if(og.equalsName(g.getName())){

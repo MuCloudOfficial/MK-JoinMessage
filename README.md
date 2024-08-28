@@ -3,7 +3,7 @@
 
 <div align="center">
     <img src="https://img.shields.io/badge/Kotlin-1.9.23-gray?style=flat&labelColor=purple" alt=""/>
-    <img src="https://img.shields.io/badge/Minecraft-1.9_~_1.20.6-gray?style=flat&labelColor=green" alt=""/>
+    <img src="https://img.shields.io/badge/Minecraft-1.9_~_1.21.1-gray?style=flat&labelColor=green" alt=""/>
     <img src="https://img.shields.io/badge/Release-SakuraOcean_V1-gray?style=flat&labelColor=pink" alt=""/>
     <img src="https://img.shields.io/badge/DEV-1-gray?style=flat&labelColor=red" alt=""/>
 </div>

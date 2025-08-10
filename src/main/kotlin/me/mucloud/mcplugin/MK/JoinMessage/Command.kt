@@ -111,9 +111,7 @@ object CommandManager: CommandExecutor{
     private fun CMD_reload(sender: CommandSender){
         GroupManager.unInit()
         Configuration.unInit()
-        SQLITEConnector.unInit()
 
-        SQLITEConnector.init(MAIN!!)
         Configuration.init()
         GroupManager.init()
         MessageSender.sendMessage(MessageLevel.FINISH, sender, "${Main.Prefix(false)} §a重载完毕")

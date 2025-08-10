@@ -47,14 +47,12 @@ object Configuration {
     }
 
     internal fun init(){
-        SQLITEConnector.readConf().forEach {
-            Conf[it.key] = it.value
-        }
+
         MessageSender.sendToConsole(MessageLevel.FINISH, "已加载 Configuration 模块")
     }
 
     internal fun unInit(){
-        SQLITEConnector.flushConf()
+
         MessageSender.sendToConsole(MessageLevel.FINISH, "已卸载 Configuration 模块")
     }
 
@@ -67,7 +65,7 @@ object Configuration {
     internal fun getConfiguration(): Map<String, String> = Conf
 
     internal fun save(){
-        SQLITEConnector.readConf()
+
     }
 
     internal fun getVersion(zh: Boolean = true, isView: Boolean = true) = if(isView){

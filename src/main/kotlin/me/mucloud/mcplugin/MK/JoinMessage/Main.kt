@@ -9,7 +9,6 @@ class Main: JavaPlugin() {
         Configuration.preInit(this)
         MessageSender.init(this)
         checkPapiHook()
-        SQLITEConnector.init(this)
         Configuration.init()
         GroupManager.init()
         CommandManager.init(this)
@@ -24,7 +23,6 @@ class Main: JavaPlugin() {
         CommandManager.unInit()
         GroupManager.unInit()
         Configuration.unInit()
-        SQLITEConnector.unInit()
         MessageSender.sendToConsole(MessageLevel.FINISH, "已成功卸载 ${Prefix(false)}")
     }
 

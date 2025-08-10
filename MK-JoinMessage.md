@@ -9,7 +9,12 @@ Instead of using unified settings, incoming and outgoing server messages are now
 ### Spy User & Group | 静默用户或静默用户组
 Allow specified users to silently login
 
-允许指定的用户静默进入服务器
+允许指定的用户静默进出服务器
+
+### Sound Support | 音效支持
+Allow Play Sound when user login server from specified group setting
+
+允许在用户进出服务器时根据指定的组设置播放音效
 
 ## Pending | 待定
 ### Multi-Server Support | 多服支持

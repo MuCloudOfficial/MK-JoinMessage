@@ -8,37 +8,8 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
-val ymlreader = FileReader(File(projectDir, "src/main/resources/plugin.yml")).readLines()
-
 group = "me.mucloud"
-private lateinit var versionCN: String
-private var DEV: Int = 0
-private lateinit var authors: List<String>
-private lateinit var versionCNV: String
-private lateinit var versionV: String
-
-ymlreader.forEach { s ->
-    val ss = s.split(": ")
-    when(ss[0]){
-        "version" -> version = ss[1]
-        "versionCN" -> versionCN = ss[1]
-        "internalVersion" -> DEV = ss[1].toInt()
-        "authors" -> authors = ss[1].substring(1).dropLast(1).trim().split(",")
-        "versionCNV" -> versionCNV = ss[1]
-        "versionV" -> versionV = ss[1]
-    }
-}
-
-println("""
-==================================
-= MK-JoinMessage     Build Info  =
-==================================
-| VERSION >>> $versionCN($version) DEV.$DEV
-| AUTHORS >>> ${authors.toString().substring(1).dropLast(1)}
-==================================
-=      MADE IN SAKURA OCEAN      =
-==================================
-""".trimIndent())
+val DEV = 1
 
 repositories {
     maven("https://maven.aliyun.com/repository/public")
@@ -53,9 +24,6 @@ dependencies {
 
     compileOnly("org.spigotmc:spigot-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
-
-    implementation("com.zaxxer:HikariCP:5.1.0")
-    implementation("org.xerial:sqlite-jdbc:3.45.3.0")
 }
 
 java{
@@ -88,7 +56,6 @@ tasks{
         dependencies{
             include(dependency("org.jetbrains.kotlin:.*"))
             include(dependency("org.jetbrains.kotlinx:.*"))
-            include(dependency("com.zaxxer:HikariCP"))
         }
         relocate("kotlin", "me.mucloud.mcplugin.MK.JoinMessage.libs.kotlin")
         relocate("com.zaxxer.hikari", "me.mucloud.mcplugin.MK.JoinMessage.libs.com.zaxxer.hikari")

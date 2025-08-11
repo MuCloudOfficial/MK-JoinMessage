@@ -2,7 +2,7 @@ package me.mucloud.mcplugin.MK.JoinMessage
 
 enum class SendMode{
 
-    NULL,
+    NULL, //SPY
     CHAT,
     ACTIONBAR,
     BOSSBAR;

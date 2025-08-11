@@ -66,7 +66,7 @@ object CommandManager: CommandExecutor{
     private fun CMD_info(sender: CommandSender){
         MessageSender.sendMessage(MessageLevel.NULL, sender, """
 
-                §7§l| ${Main.Prefix(false)}  §a${Updater.getType()}.${Configuration.getVersion(zh = false, isView = true)} | ${Configuration.getVersion()}    §r§7第 §4${Configuration.getDev()} §7开发版本
+                §7§l| ${Main.Prefix(false)}  §a${Configuration.getVersion(zh = false, isView = true)} | ${Configuration.getVersion()}    §r§7第 §4${Configuration.getDev()} §7开发版本
                 §7§l| §6作者：${Configuration.getAuthorList()}
                 §7§l| ===================================================
                 §7§l| §b项目站：https://gitee.com/MuCloudOfficial/${Main.Prefix(true)}
@@ -109,20 +109,12 @@ object CommandManager: CommandExecutor{
     }
 
     private fun CMD_reload(sender: CommandSender){
-        GroupManager.unInit()
+        GroupManager.save()
         Configuration.unInit()
 
         Configuration.init()
         GroupManager.init()
         MessageSender.sendMessage(MessageLevel.FINISH, sender, "${Main.Prefix(false)} §a重载完毕")
-    }
-
-    private fun CMD_yamldb(){
-        //todo("未实现的")
-    }
-
-    private fun CMD_sqlitedb(){
-        //todo("未实现的")
     }
 
     private fun CMD_addGroup(sender: CommandSender, args: List<String>){
@@ -232,7 +224,7 @@ object CommandManager: CommandExecutor{
             }
             val og = GroupManager.getGroup(p)
             if(og == null || GroupManager.isSpyPlayer(p)){
-                GroupManager.delSpyPlayer(p)
+                GroupManager.SPY().delMember(p)
             }else{
                 if(og.equalsName(g.getName())){
                     MessageSender.sendMessage(MessageLevel.ERR, sender, "该玩家已在该组中")
@@ -258,13 +250,13 @@ object CommandManager: CommandExecutor{
                 return
             }
             GroupManager.getGroup(p)!!.delMember(p)
-            GroupManager.addSpyPlayer(p)
+            GroupManager.SPY().addMember(p)
             MessageSender.sendMessage(MessageLevel.FINISH, sender, "已成功将 ${p.name} 设置为静默状态")
         }
     }
 
     private fun CMD_listSpy(sender: CommandSender){
-        MessageSender.sendMessage(MessageLevel.INFO, sender, "当前静默状态玩家(${GroupManager.SPY_SIZE()}):")
+        MessageSender.sendMessage(MessageLevel.INFO, sender, "当前静默状态玩家(${GroupManager.SPY().size()}):")
         val res = StringBuilder()
         GroupManager.SPY().forEach {
             if(GroupManager.SPY().lastIndexOf(it) == 0){

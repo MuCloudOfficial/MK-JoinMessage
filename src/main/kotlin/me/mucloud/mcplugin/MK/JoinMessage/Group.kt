@@ -12,22 +12,16 @@ object GroupManager{
         "default", SendMode.CHAT
     )
 
-    private val SPY_USERS = emptyList<OfflinePlayer>().toMutableList()
+    private val SPY_GROUP = Group(
+        "Spy", SendMode.NULL
+    )
 
-    internal fun init(){
-        SQLITEConnector.readGroup().forEach {
-            addGroup(it)
-        }
+    fun init(){
 
-        if(getGroup("default") == null){
-            addGroup(DEFAULT_GROUP)
-        }
-        SQLITEConnector.readUser()
-        SQLITEConnector.readSpy()
     }
 
-    internal fun unInit(){
-        SQLITEConnector.flushGroupManager()
+    fun save(){
+
     }
 
     // 0 = Success | 1 = Already Exist
@@ -71,42 +65,15 @@ object GroupManager{
         return null
     }
 
-    internal fun addSpyPlayer(spy: OfflinePlayer): Boolean{
-        if(isSpyPlayer(spy)){
-            return false
-        }
-        SPY_USERS.add(spy)
-        return true
-    }
+    internal fun isSpyPlayer(target: OfflinePlayer): Boolean = SPY_GROUP.contains(target)
 
-    internal fun delSpyPlayer(spy: OfflinePlayer): Boolean{
-        SPY_USERS.forEach {
-            if(spy.uniqueId == it.uniqueId){
-                SPY_USERS.remove(it)
-                return true
-            }
-        }
-        return false
-    }
+    internal fun DEFAULT_GROUP(): Group = DEFAULT_GROUP
 
-    internal fun isSpyPlayer(target: OfflinePlayer): Boolean {
-        SPY_USERS.forEach {
-            if(target.uniqueId == it.uniqueId){
-                return true
-            }
-        }
-        return false
-    }
-
-    internal fun DEFAULT_GROUP(): Group = getGroup("default")!!
-
-    internal fun size(): Int = POOL.size
-
-    internal fun SPY_SIZE(): Int = SPY_USERS.size
+    internal fun size(): Int = POOL.size + SPY_GROUP.size() + DEFAULT_GROUP.size()
 
     internal fun POOL(): List<Group> = POOL
 
-    internal fun SPY(): List<OfflinePlayer> = SPY_USERS
+    internal fun SPY(): Group = SPY_GROUP
 
 }
 
@@ -117,7 +84,7 @@ class Group(
     private var JoinMessage: String = "§7[§a+§7] {player}",
     private var ExitMessage: String = "§7[§4-§7] {player}",
     private val Member: MutableList<OfflinePlayer> = emptyList<OfflinePlayer>().toMutableList()
-){
+): Iterable<OfflinePlayer>{
 
     fun getName(): String = Name
     fun getJoinMessage(): String = JoinMessage
@@ -186,5 +153,8 @@ class Group(
         }
         return false
     }
+
+    fun size(): Int = Member.size
+    override fun iterator(): Iterator<OfflinePlayer> = Member.iterator()
 
 }

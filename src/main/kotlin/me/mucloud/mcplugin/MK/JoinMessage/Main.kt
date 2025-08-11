@@ -13,15 +13,13 @@ class Main: JavaPlugin() {
         GroupManager.init()
         CommandManager.init(this)
         Listener.init(this)
-        Updater.init(this)
         MessageSender.sendToConsole(MessageLevel.FINISH, "已成功加载 ${Prefix(false)}")
     }
 
     override fun onDisable(){
-        Updater.unInit()
         Listener.unInit()
         CommandManager.unInit()
-        GroupManager.unInit()
+        GroupManager.save()
         Configuration.unInit()
         MessageSender.sendToConsole(MessageLevel.FINISH, "已成功卸载 ${Prefix(false)}")
     }

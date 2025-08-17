@@ -1,5 +1,8 @@
-package me.mucloud.mcplugin.MK.JoinMessage
+package me.mucloud.mcplugin.MK.JoinMessage.internal
 
+import me.mucloud.mcplugin.MK.JoinMessage.Main
+import me.mucloud.mcplugin.MK.JoinMessage.group.Group
+import me.mucloud.mcplugin.MK.JoinMessage.group.GroupManager
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.command.Command

@@ -1,11 +1,11 @@
-package me.mucloud.mcplugin.MK.JoinMessage
+package me.mucloud.mcplugin.MK.JoinMessage.internal
 
 enum class SendMode{
 
     NULL, //SPY
     CHAT,
-    ACTIONBAR,
-    BOSSBAR;
+    ACTIONBAR, // todo
+    BOSSBAR; // todo
 
     companion object{
         fun match(id: String): SendMode{

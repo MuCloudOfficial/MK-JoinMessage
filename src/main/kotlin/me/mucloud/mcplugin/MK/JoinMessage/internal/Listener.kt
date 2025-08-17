@@ -1,12 +1,13 @@
-package me.mucloud.mcplugin.MK.JoinMessage
+package me.mucloud.mcplugin.MK.JoinMessage.internal
 
+import me.mucloud.mcplugin.MK.JoinMessage.Main
+import me.mucloud.mcplugin.MK.JoinMessage.group.GroupManager
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import javax.swing.GroupLayout
 
 object Listener: Listener{
 

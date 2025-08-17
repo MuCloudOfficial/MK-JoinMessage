@@ -1,6 +1,7 @@
-package me.mucloud.mcplugin.MK.JoinMessage
+package me.mucloud.mcplugin.MK.JoinMessage.internal
 
 import me.clip.placeholderapi.PlaceholderAPI
+import me.mucloud.mcplugin.MK.JoinMessage.Main
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -45,7 +46,7 @@ object MessageSender {
 
     fun convert(request: Player, msg: String): String{
         val colorConverted = ChatColor.translateAlternateColorCodes('&', msg)
-        return if(Main.isPAPIHook()){
+        return if(P()){
             PlaceholderAPI.setPlaceholders(request, colorConverted.replace("{player}", request.name))
         }else{
             colorConverted.replace("{player}", request.name)

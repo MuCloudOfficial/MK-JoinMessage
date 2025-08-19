@@ -69,8 +69,8 @@ object CommandManager: CommandExecutor{
     private fun CMD_info(sender: CommandSender){
         MessageSender.sendMessage(MessageLevel.NULL, sender, """
 
-                §7§l| ${Main.Prefix(false)}  §a${Configuration.getVersion(zh = false, isView = true)} | ${Configuration.getVersion()}    §r§7第 §4${Configuration.getDev()} §7开发版本
-                §7§l| §6作者：${Configuration.getAuthorList()}
+                §7§l| ${Main.Prefix(false)}  §a${Main.getVersion().getView()} | ${Main.getVersion().getVersion()}    §r§7第 §4${Main.getVersion().getDev()} §7开发版本
+                §7§l| §6作者：${Main.getVersion().getAuthorList()}
                 §7§l| ===================================================
                 §7§l| §b项目站：https://gitee.com/MuCloudOfficial/${Main.Prefix(true)}
                 §7§l| §b项目站：https://github.com/MuCloudOfficial/${Main.Prefix(true)}
@@ -122,7 +122,7 @@ object CommandManager: CommandExecutor{
 
     private fun CMD_addGroup(sender: CommandSender, args: List<String>){
         if(args.size == 1){
-            if(GroupManager.addGroup(Group(args[0])) == 1){
+            if(!GroupManager.addGroup(Group(args[0]))){
                 MessageSender.sendMessage(MessageLevel.ERR, sender, "该组已存在")
                 return
             }

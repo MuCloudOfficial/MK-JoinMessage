@@ -1,33 +1,35 @@
 package me.mucloud.mcplugin.MK.JoinMessage.group
 
 import me.mucloud.mcplugin.MK.JoinMessage.internal.SendMode
-import me.mucloud.mcplugin.MK.JoinMessage.internal.Configuration
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
 
 object GroupManager{
 
-    private val POOL: MutableList<Group> = emptyList<Group>().toMutableList()
+    private val POOL: MutableList<Group> = mutableListOf()
     private val DEFAULT_GROUP = Group("default", SendMode.CHAT)
     private val SPY_GROUP = Group("Spy", SendMode.NULL)
 
     fun init(){
-
+        POOL.add(DEFAULT_GROUP)
+        POOL.add(SPY_GROUP)
     }
 
     fun save(){
-
+        POOL.forEach { p ->
+            saveGroup(p)
+        }
     }
 
     // 0 = Success | 1 = Already Exist
-    internal fun addGroup(group: Group): Int{
+    internal fun addGroup(group: Group): Boolean{
         val target = getGroup(group.getName())
         if(target == null){
             POOL.add(group)
-            return 0
+            return true
         }
-        return 1
+        return false
     }
 
     // 0 - Success | 1 - Not Found | 2 - Not Allowed
@@ -65,10 +67,20 @@ object GroupManager{
 
     internal fun DEFAULT_GROUP(): Group = DEFAULT_GROUP
 
-    internal fun size(): Int = POOL.size + SPY_GROUP.size() + DEFAULT_GROUP.size()
+    internal fun size(): Int {
+        var sum = 0
+        POOL.forEach { p ->
+            sum += p.size()
+        }
+        return sum
+    }
 
     internal fun POOL(): List<Group> = POOL
 
     internal fun SPY(): Group = SPY_GROUP
+
+    internal fun saveGroup(group: Group){
+        //todo
+    }
 
 }

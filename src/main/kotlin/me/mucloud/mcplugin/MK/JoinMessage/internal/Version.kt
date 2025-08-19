@@ -35,7 +35,7 @@ class Version(private val main: Main) {
     fun getVersionCN(): String = VersionCN
     fun getAuthorList(): List<String> = AuthorList
     fun getDev(): Int = dev
-    fun getDevView(): String = VersionCNView
-    fun getDevViewCN(): String = VersionCNView
+    fun getView(): String = VersionView
+    fun getViewCN(): String = VersionCNView
 
 }

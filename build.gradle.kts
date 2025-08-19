@@ -58,7 +58,6 @@ tasks{
             include(dependency("org.jetbrains.kotlinx:.*"))
         }
         relocate("kotlin", "me.mucloud.mcplugin.MK.JoinMessage.libs.kotlin")
-        relocate("com.zaxxer.hikari", "me.mucloud.mcplugin.MK.JoinMessage.libs.com.zaxxer.hikari")
     }
 
 }

@@ -3,6 +3,7 @@ package me.mucloud.mcplugin.MK.JoinMessage.group
 import me.mucloud.mcplugin.MK.JoinMessage.internal.SendMode
 import org.bukkit.OfflinePlayer
 import org.bukkit.Sound
+import org.bukkit.entity.Player
 
 class Group(
     private var Name: String,
@@ -10,8 +11,8 @@ class Group(
     private var SOUND: Sound = Sound.BLOCK_NOTE_BLOCK_PLING,
     private var JoinMessage: String = "§7[§a+§7] {player}",
     private var ExitMessage: String = "§7[§4-§7] {player}",
-    private val Member: MutableList<OfflinePlayer> = emptyList<OfflinePlayer>().toMutableList()
-): Iterable<OfflinePlayer>{
+    private val Member: MutableList<Player> = mutableListOf()
+): Iterable<Player>{
 
     fun getName(): String = Name
     fun getJoinMessage(): String = JoinMessage
@@ -31,7 +32,7 @@ class Group(
         SOUND = sound
     }
 
-    fun addMember(player: OfflinePlayer): Boolean{
+    fun addMember(player: Player): Boolean{
         if(contains(player)){
             return false
         }
@@ -39,7 +40,7 @@ class Group(
         return true
     }
 
-    fun delMember(player: OfflinePlayer): Boolean{
+    fun delMember(player: Player): Boolean{
         Member.forEach {
             if(player.uniqueId == it.uniqueId){
                 Member.remove(it)
@@ -49,7 +50,7 @@ class Group(
         return false
     }
 
-    fun getMembers(): List<OfflinePlayer> = Member
+    fun getMembers(): List<Player> = Member
 
     fun info(): String {
         val res = StringBuilder()
@@ -82,6 +83,6 @@ class Group(
     }
 
     fun size(): Int = Member.size
-    override fun iterator(): Iterator<OfflinePlayer> = Member.iterator()
+    override fun iterator(): Iterator<Player> = Member.iterator()
 
 }

@@ -203,7 +203,7 @@ object CommandManager: CommandExecutor{
                 try{
                     g.setSound(Sound.valueOf(args[1]))
                     MessageSender.sendMessage(MessageLevel.FINISH, sender, "该组设置声音成功")
-                }catch (e: IllegalArgumentException){
+                }catch (_: IllegalArgumentException){
                     MessageSender.sendMessage(MessageLevel.ERR, sender, "输入的声音键名非法")
                     return
                 }

@@ -1,5 +1,6 @@
 package me.mucloud.mcplugin.MK.JoinMessage.group
 
+import me.mucloud.mcplugin.MK.JoinMessage.internal.Configuration.save
 import me.mucloud.mcplugin.MK.JoinMessage.internal.SendMode
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -18,7 +19,7 @@ object GroupManager{
 
     fun save(){
         POOL.forEach { p ->
-            saveGroup(p)
+            p.save()
         }
     }
 
@@ -78,9 +79,5 @@ object GroupManager{
     internal fun POOL(): List<Group> = POOL
 
     internal fun SPY(): Group = SPY_GROUP
-
-    internal fun saveGroup(group: Group){
-        //todo
-    }
 
 }

@@ -76,4 +76,13 @@ object Configuration {
 
     internal fun save() = Config.save(ConfigFile)
 
+    fun Group.save(){
+        Config.getConfigurationSection("Groups.${getName()}")!!.apply {
+            set("sound", getSound().name)
+            set("JoinMessage", getJoinMessage())
+            set("ExitMessage", getExitMessage())
+            set("Members", getMembers().map { it.name })
+        }
+    }
+
 }
